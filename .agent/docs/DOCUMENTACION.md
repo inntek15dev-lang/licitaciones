@@ -1,505 +1,379 @@
-# Documentación Técnica y Funcional: OIEM Abastible
+# Documentación Técnica y Funcional: Licitaciones RyCE
 
-Este documento detalla los módulos del sistema OIEM (Observatorio de Información y Evaluación Mensual) bajo el formato de "Historia de Usuario" (Funcional) y "Ficha Técnica" (Técnico), describiendo qué hace el sistema y cómo lo logra internamente.
-
----
-
-## Módulo 1: Dashboard Admin
-
-### Historia de Usuario (El QUÉ)
-"Como **Administrador**, quiero ver un resumen ejecutivo con KPIs de cumplimiento, cantidad de contratistas, registros y evidencias, además de los registros recientes, para monitorear el estado general del programa."
-
-### Ficha Técnica / Blueprint (El CÓMO)
-
-*   **Controlador**: `App\Http\Controllers\Admin\DashboardController`
-*   **Vista**: `resources/views/admin/dashboard.blade.php`
-*   **Datos / Inputs**:
-    *   Usuario autenticado con rol `admin`.
-*   **Lógica Oculta**:
-    *   **Cumplimiento General**: Promedio de `porcentaje_cumplimiento` de todos los registros.
-    *   **Total Contratistas**: Conteo de `user_id` distintos en registros.
-    *   **Registros Recientes**: Últimos 10 registros con cálculo de `promedio_anual` por EECC.
-*   **Outputs**:
-    *   4 tarjetas KPI: Cumplimiento General, Contratistas, Registros, Evidencias.
-    *   Tabla completa con 12 columnas (misma estructura que Registros).
-    *   Barra de progreso visual para cumplimiento.
+Este documento detalla los módulos del sistema Licitaciones RyCE bajo el formato de "Historia de Usuario" (Funcional) y "Ficha Técnica" (Técnico), describiendo qué hace el sistema y cómo lo logra internamente.
 
 ---
 
-## Módulo 2: Dashboard Contratista
+## Resumen del Sistema
 
-### Historia de Usuario (El QUÉ)
-"Como **Contratista**, quiero ver mi porcentaje de cumplimiento actual, compararlo con la meta del programa, y tener acceso rápido a crear nuevos registros, para saber si estoy cumpliendo los objetivos de seguridad."
+**Licitaciones RyCE** es una plataforma web para gestión de licitaciones que permite:
+- **Empresas Principales** (clientes de RyCE): Crear y gestionar licitaciones
+- **Empresas Contratistas** (proveedores): Buscar y postular a licitaciones
+- **RyCE (Admin)**: Supervisar el proceso y precalificar ofertas
 
-### Ficha Técnica / Blueprint (El CÓMO)
-
-*   **Controlador**: `App\Http\Controllers\Contratista\DashboardController`
-*   **Vista**: `resources/views/contratista/dashboard.blade.php`
-*   **Datos / Inputs**:
-    *   Usuario autenticado con rol `contratista`.
-    *   Meta del programa desde `App\Models\Configuracion::getMetaPrograma()`.
-*   **Lógica Oculta**:
-    *   **Cumplimiento Actual**: Porcentaje del último registro enviado.
-    *   **Semáforo Visual**: Verde (≥85%), Amarillo (≥60%), Rojo (<60%).
-    *   **Progreso Mensual**: Gráfico de barras con historial de cumplimiento.
-*   **Outputs**:
-    *   Tarjetas de cumplimiento con indicador semáforo.
-    *   Botón "Nuevo Registro" prominente.
-    *   Historial de los últimos 6 meses.
+### Arquitectura Tecnológica
+- **Backend**: Laravel 12.x
+- **Frontend Interactivo**: Livewire 3.x
+- **Base de Datos**: SQLite (desarrollo) / MySQL (producción)
+- **Estilos**: Tailwind CSS
+- **Autenticación y Roles**: Laravel Breeze, Spatie/laravel-permission
 
 ---
 
-## Módulo 3: Gestión de Registros (Admin)
+## Módulo 1: Autenticación y Roles
 
 ### Historia de Usuario (El QUÉ)
-"Como **Administrador**, quiero ver todos los registros enviados por los contratistas, filtrar por EECC, Dependencia y Periodo, y ordenar por cumplimiento o dotación, para evaluar el desempeño de cada empresa."
+"Como **Usuario del Sistema**, quiero identificarme con mi email y contraseña para acceder a las funcionalidades que corresponden a mi rol."
 
 ### Ficha Técnica / Blueprint (El CÓMO)
 
-*   **Controlador**: `App\Http\Controllers\Admin\RegistroController`
-*   **Vista**: `resources/views/admin/registros/index.blade.php`
-*   **Modelo**: `App\Models\Registro`
-*   **Filtros Disponibles**:
-    *   EECC (dropdown dinámico)
-    *   Dependencia (desde tabla maestra `dependencias`)
-    *   Periodo (input mes/año)
-*   **Ordenamiento Clickeable**:
-    *   Mes Informado (periodo) ↑↓
-    *   Dotación Total ↑↓
-    *   Cumplimiento ↑↓
-*   **Columnas de la Tabla**:
-    | # | Columna | Descripción |
-    |---|---------|-------------|
-    | 1 | # | Correlativo con paginación |
-    | 2 | Mes Informado | Formato "Enero 2025" |
-    | 3 | Nombre EECC | Empresa Contratista |
-    | 4 | Dependencia | Planta asignada |
-    | 5 | Dotación Total | Personal total |
-    | 6 | Supervisores | Cantidad |
-    | 7 | Prevencionistas | Cantidad |
-    | 8 | Personas Nuevas | Ingresos del mes |
-    | 9 | Cumplimiento | % del mes (badge semáforo) |
-    | 10 | % Promedio Año | Calculado dinámicamente |
-    | 11 | Fecha Envío | Timestamp de creación |
-    | 12 | Acciones | Ver detalle |
-*   **Lógica Oculta**:
-    *   `promedio_anual`: Calculado en runtime como AVG de `porcentaje_cumplimiento` del mismo `user_id` y año.
-    *   Filas alternadas: `bg-white` / `bg-sky-100`.
+*   **Paquetes**: Laravel Breeze (Livewire), Spatie/laravel-permission
+*   **Modelo**: `User` con trait `HasRoles`
+*   **Roles del Sistema**:
+    | Rol | Descripción | Acceso |
+    |-----|-------------|--------|
+    | `admin_plataforma` | Administrador RyCE | Control total, precalificación |
+    | `usuario_principal` | Empresa cliente | Crear/gestionar licitaciones |
+    | `usuario_contratista` | Empresa proveedora | Buscar/postular licitaciones |
+
+*   **Campos Adicionales en `users`**:
+    - `nombre_completo` - Nombre completo del usuario
+    - `empresa_principal_id` - FK a empresa principal
+    - `empresa_contratista_id` - FK a empresa contratista
+    - `activo` - Estado del usuario
+    - `ultimo_login` - Fecha último acceso
 
 ---
 
-## Módulo 4: Formulario de Registro Mensual (Contratista)
+## Módulo 2: Gestión de Empresas
 
 ### Historia de Usuario (El QUÉ)
-"Como **Contratista**, quiero completar mi registro mensual indicando cumplimiento de actividades, subir hasta 4 evidencias por actividad (de una en una desde diferentes carpetas), y ver qué archivos ya subí, para reportar correctamente mis avances de seguridad."
+"Como **Administrador RyCE**, quiero gestionar las empresas registradas (principales y contratistas) para mantener el directorio actualizado."
 
 ### Ficha Técnica / Blueprint (El CÓMO)
 
-*   **Componente Livewire**: `App\Livewire\Contratista\FormularioRegistro`
-*   **Vista**: `resources/views/livewire/contratista/formulario-registro.blade.php`
-*   **Modelos Afectados**: `Registro`, `RegistroActividad`, `Evidencia`
-*   **Inputs**:
-    *   Información del contratista (autocompletada)
-    *   Periodo (mes/año)
-    *   Por cada Elemento/Actividad:
-        *   Cumple (Sí=1/No=0)
-        *   Responsable (texto)
-        *   Observaciones
-        *   Evidencias (hasta 4 archivos por actividad)
-*   **Lógica Oculta**:
-    *   **Acumulación de Archivos**: Propiedad `$archivosAcumulados` permite seleccionar archivos uno a uno.
-    *   **Límite de 4**: Valida `total_existentes + total_pendientes ≤ 4`.
-    *   **Eliminar Pendiente**: Método `eliminarArchivoTemporal($actividadId, $index)`.
-    *   **Cálculo de Cumplimiento**: `Registro->actualizarCumplimiento()` calcula % basado en actividades marcadas como "Cumple".
-*   **Almacenamiento**: Disco `public`, ruta `storage/app/public/evidencias/{registro_id}/`.
-*   **Tipos Permitidos**: PDF, JPG, JPEG, PNG (máx 10MB por archivo).
-*   **UI Features**:
-    *   Spinner animado durante carga de archivo.
-    *   Botón ❌ grande para quitar archivos pendientes.
-    *   "Criterio de aprobación:" visible antes de cada criterio.
-    *   Botón "📎 + Cargar Evidencia" con contador de disponibles.
-
----
-
-## Módulo 5: Gestión de Evidencias
-
-### Historia de Usuario (El QUÉ)
-"Como **Usuario**, quiero ver y/o descargar las evidencias subidas. Como **Contratista** puedo ver mis propias evidencias en el navegador. Como **Admin** puedo ver todas las evidencias y descargarlas."
-
-### Ficha Técnica / Blueprint (El CÓMO)
-
-#### Para Contratistas:
-*   **Controlador**: `App\Http\Controllers\Contratista\EvidenciaController`
-*   **Vista**: `resources/views/contratista/evidencias/index.blade.php`
-*   **Rutas**:
-    *   `contratista.evidencia.view` → Abre en navegador
-    *   `contratista.evidencia.download` → Fuerza descarga
-*   **Filtro**: Solo evidencias del usuario autenticado.
-
-#### Para Administradores:
-*   **Controlador**: `App\Http\Controllers\Admin\EvidenciaController`
-*   **Vista**: `resources/views/admin/evidencias/index.blade.php`
-*   **Rutas**:
-    *   `admin.evidencias.view` → Abre en navegador
-    *   `admin.evidencias.download` → Fuerza descarga
-*   **Filtro**: Todas las evidencias del sistema.
-
-*   **Lógica Oculta**:
-    *   `Storage::disk('public')->response()` para visualización inline.
-    *   `Storage::disk('public')->download()` para descarga forzada.
-    *   Validación de pertenencia antes de servir archivo.
-
----
-
-## Módulo 6: Elementos y Actividades
-
-### Historia de Usuario (El QUÉ)
-"Como **Administrador**, quiero gestionar los Elementos del programa (ej: Investigación de Accidentes) y sus Actividades asociadas (ej: Envío de informe en plazo), para definir qué deben reportar los contratistas."
-
-### Ficha Técnica / Blueprint (El CÓMO)
-
-*   **Controladores**: 
-    *   `App\Http\Controllers\Admin\ElementoController`
-    *   `App\Http\Controllers\Admin\ActividadController`
-*   **Modelos**: `Elemento`, `Actividad`
+#### 2.1 Empresas Principales
+*   **Modelo**: `EmpresaPrincipal`
+*   **Tabla**: `empresas_principales`
+*   **Campos Principales**:
+    - `razon_social`, `rut` (único), `direccion`, `telefono`
+    - `email_contacto_principal`, `persona_contacto_principal`
+    - `logo_url`, `activo`
 *   **Relaciones**:
-    *   `Elemento hasMany Actividad`
-    *   `Actividad belongsTo Elemento`
-*   **Campos de Elemento**:
-    *   código, nombre, descripcion, orden, activo
-*   **Campos de Actividad**:
-    *   código, descripción, criterios, frecuencia, requiere_evidencia, orden, activo
-*   **Rutas**: CRUD anidado `admin/elementos/{elemento}/actividades`.
+    - `hasMany(User)` - Usuarios de la empresa
+    - `hasMany(Licitacion)` - Licitaciones creadas
 
----
-
-## Módulo 7: Gestión de Dependencias (CRUD)
-
-### Historia de Usuario (El QUÉ)
-"Como **Administrador**, quiero gestionar el catálogo de Dependencias (plantas) desde una interfaz simple, con formulario a la izquierda y tabla a la derecha, para mantener la data maestra actualizada."
-
-### Ficha Técnica / Blueprint (El CÓMO)
-
-*   **Controlador**: `App\Http\Controllers\Admin\DependenciaController`
-*   **Modelo**: `App\Models\Dependencia`
-*   **Vista**: `resources/views/admin/dependencias/index.blade.php`
-*   **Campos**: nombre (string), activo (boolean)
-*   **Layout**:
-    *   Columna izquierda (1/3): Formulario crear/editar
-    *   Columna derecha (2/3): Tabla con acciones
-*   **Lógica Oculta**:
-    *   Nombres guardados en MAYÚSCULAS automáticamente.
-    *   JavaScript para alternar entre modo "Nuevo" y "Editar".
-    *   Confirmación antes de eliminar.
-
----
-
-## Módulo 8: Configuración del Sistema
-
-### Historia de Usuario (El QUÉ)
-"Como **Administrador**, quiero configurar parámetros globales del sistema como la Meta del Programa (%), para que se reflejen dinámicamente en todos los dashboards."
-
-### Ficha Técnica / Blueprint (El CÓMO)
-
-*   **Controlador**: `App\Http\Controllers\Admin\ConfiguracionController`
-*   **Modelo**: `App\Models\Configuracion`
-*   **Vista**: `resources/views/admin/configuracion/index.blade.php`
-*   **Estructura de Tabla**:
-    *   `key` (string, único)
-    *   `value` (string)
-    *   `description` (string)
-    *   `type` (string: integer, string, boolean)
-*   **Métodos Estáticos**:
-    *   `Configuracion::get($key, $default)` → Obtiene valor
-    *   `Configuracion::set($key, $value)` → Guarda valor
-    *   `Configuracion::getMetaPrograma()` → Shortcut para meta_programa
-*   **Uso en Vistas**:
-    ```php
-    $metaPrograma = Configuracion::getMetaPrograma(); // 85 por defecto
-    ```
-
----
-
-## Módulo 9: Reportes y Exportación
-
-### Historia de Usuario (El QUÉ)
-"Como **Administrador**, quiero generar reportes consolidados de cumplimiento y exportarlos a Excel/PDF, para presentar informes a la gerencia."
-
-### Ficha Técnica / Blueprint (El CÓMO)
-
-*   **Controlador**: `App\Http\Controllers\Admin\ReporteController`
-*   **Vista**: `resources/views/admin/reportes/index.blade.php`
-*   **Rutas**:
-    *   `admin.reportes.index` → Vista principal
-    *   `admin.reportes.excel` → Exportar Excel
-    *   `admin.reportes.pdf` → Exportar PDF
-*   **Filtros**: Por periodo, EECC, Dependencia.
-
----
-
-## Módulo 10: Historial del Contratista
-
-### Historia de Usuario (El QUÉ)
-"Como **Contratista**, quiero ver el historial de todos mis registros enviados, con su porcentaje de cumplimiento y estado, para hacer seguimiento de mi desempeño."
-
-### Ficha Técnica / Blueprint (El CÓMO)
-
-*   **Controlador**: `App\Http\Controllers\Contratista\HistorialController`
-*   **Vista**: `resources/views/contratista/historial/index.blade.php`
-*   **Datos**: Registros del usuario ordenados por fecha descendente.
-*   **Acciones**: Ver detalle, Editar (si el mes está abierto).
-
----
-
-## Módulo 11: Autenticación y Roles
-
-### Historia de Usuario (El QUÉ)
-"Como **Usuario**, quiero iniciar sesión con mi email y contraseña, y ver solo las opciones correspondientes a mi rol (Admin o Contratista)."
-
-### Ficha Técnica / Blueprint (El CÓMO)
-
-*   **Paquete**: Laravel Breeze + Livewire
-*   **Middleware**: `role:admin`, `role:contratista`
-*   **Rutas Protegidas**:
-    *   `/admin/*` → Solo rol `admin`
-    *   `/contratista/*` → Solo rol `contratista`
-*   **Navegación Dinámica**: `resources/views/livewire/layout/navigation.blade.php`
-    *   Muestra menú según `auth()->user()->role`.
-*   **Gestión por Contratistas**: Los contratistas pueden gestionar sus propios usuarios con rol `usuario_contratista`, asignándoles servicios y dependencias específicos de su propia cartera.
-
----
-
-## Módulo 12: Jerarquía de Usuarios y Operatividad
-### Historia de Usuario (El QUÉ)
-"Como **Contratista**, quiero crear trabajadores operativos que solo vean y registren información de un servicio y dependencia específico, para delegar la carga de datos sin exponer toda la información de la empresa."
-
-### Ficha Técnica (El CÓMO)
-*   **Role**: `usuario_contratista`
-*   **Vinculación**: Campo `parent_id` en tabla `users` que apunta al ID del contratista dueño.
-*   **Restricción de Datos**:
-    *   **Dashboard**: Filtra estadísticas solo para el `tipo_contratista_id` y `dependencia_id` asignado al usuario operativo.
-    *   **Registro**: El formulario Livewire detecta al trabajador y bloquea la selección a su asignación única. Los datos se guardan bajo el `user_id` de la empresa (parent) para consolidación.
-    *   **Historial**: Filtra registros de la empresa por la dependencia del trabajador.
-
----
-
-## Stack Tecnológico
-
-| Componente | Tecnología | Versión |
-|------------|------------|---------|
-| Framework | Laravel | 12.x |
-| Frontend Reactivo | Livewire | 3.x |
-| CSS | Tailwind CSS | 3.x |
-| Base de Datos | MySQL | 8.x |
-| Almacenamiento | Laravel Storage (Disco Public) | - |
-| Autenticación | Laravel Breeze | - |
-| Fechas | Carbon | - |
-
----
-
-## Estructura de Base de Datos
-
-### Tablas Principales
-
-| Tabla | Descripción |
-|-------|-------------|
-| `users` | Usuarios del sistema (Admin/Contratista) |
-| `elementos` | Elementos del programa de seguridad |
-| `actividades` | Actividades por elemento |
-| `registros` | Registros mensuales de contratistas |
-| `registro_actividades` | Detalle de cumplimiento por actividad |
-| `evidencias` | Archivos adjuntos a las actividades |
-| `dependencias` | Catálogo de dependencias/plantas |
-| `contratista_asignaciones` | Vínculo entre Contratista, Servicio y Dependencia |
-| `configuraciones` | Parámetros del sistema |
-
-### Relaciones Principales
-
-```
-User (1) ──── (N) Registro
-Registro (1) ──── (N) RegistroActividad
-RegistroActividad (1) ──── (N) Evidencia
-Elemento (1) ──── (N) Actividad
-```
-
----
-
-## Módulo 13: Sistema de Solicitudes de Reapertura
-
-### Historia de Usuario (El QUÉ)
-"Como **Contratista**, quiero solicitar la reapertura de un registro ya auditado para corregir errores, especificando el motivo, y como **Administrador de Contrato**, quiero revisar, aprobar o rechazar esas solicitudes, definiendo una fecha límite para la subsanación."
-
-### Ficha Técnica / Blueprint (El CÓMO)
-
-*   **Modelo**: `App\Models\SolicitudReapertura`
-*   **Controladores**: 
-    *   `App\Http\Controllers\Contratista\SolicitudReaperturaController`
-    *   `App\Http\Controllers\Admin\SolicitudReaperturaController`
-*   **Tabla**: `solicitudes_reapertura`
-*   **Campos**:
-    *   `registro_id` - Registro al que aplica la solicitud
-    *   `solicitante_id` - Usuario contratista que solicita
-    *   `motivo` - Justificación de la reapertura
-    *   `estado` - Enum: `pendiente`, `aprobada`, `rechazada`
-    *   `aprobador_id` - Admin que resuelve la solicitud
-    *   `comentario_respuesta` - Respuesta del administrador
-    *   `fecha_limite_subsanacion` - Plazo para subsanar (definido al aprobar)
-    *   `fecha_respuesta` - Timestamp de la resolución
-*   **Flujo**:
-    1. Contratista crea solicitud desde historial (registro auditado)
-    2. Admin ve solicitudes pendientes en panel de administración
-    3. Admin aprueba (con fecha límite) o rechaza (con comentario)
-    4. Contratista recibe email con resolución
-    5. Si aprobada, contratista puede editar hasta la fecha límite
-    6. Después del plazo, el registro se cierra automáticamente
-*   **Notificaciones por Email**:
-    *   `App\Mail\SolicitudReaperturaCreada` - Notifica al admin
-    *   `App\Mail\SolicitudReaperturaResuelta` - Notifica al contratista (aprobada/rechazada)
-
----
-
-## Módulo 14: Trazabilidad de Registros (Logs)
-
-### Historia de Usuario (El QUÉ)
-"Como **Administrador**, quiero ver un historial detallado de todas las acciones realizadas sobre un registro (creación, edición, auditoría, reaperturas), para tener trazabilidad completa de quién hizo qué y cuándo."
-
-### Ficha Técnica / Blueprint (El CÓMO)
-
-*   **Modelo**: `App\Models\RegistroLog`
-*   **Tabla**: `registro_logs`
-*   **Campos**:
-    *   `registro_id` - Registro al que pertenece el log
-    *   `user_id` - Usuario que realizó la acción
-    *   `accion` - Tipo de acción (ver lista abajo)
-    *   `descripcion` - Descripción adicional
-    *   `datos_anteriores` - JSON con estado previo
-    *   `datos_nuevos` - JSON con estado nuevo
-    *   `ip_address` - IP del usuario
-*   **Acciones Registradas**:
-    | Código | Etiqueta |
-    |--------|----------|
-    | `crear` | 📝 Registro Creado |
-    | `editar` | ✏️ Registro Editado |
-    | `solicitar_reapertura` | 🔔 Solicitud de Reapertura |
-    | `aprobar_reapertura` | ✅ Reapertura Aprobada |
-    | `rechazar_reapertura` | ❌ Reapertura Rechazada |
-    | `reabrir` | 🔓 Registro Reabierto |
-    | `subsanar` | 📩 Subsanación Enviada |
-    | `iniciar_auditoria` | 🔍 Auditoría Iniciada |
-    | `completar_auditoria` | ✓ Auditoría Completada |
-    | `comentario_auditoria` | 💬 Comentario de Auditoría |
-*   **Helper Estático**:
-    ```php
-    RegistroLog::registrar($registroId, 'accion', 'descripción opcional', $datosAnteriores, $datosNuevos);
-    ```
-*   **Exportación**: Disponible en PDF desde la vista de detalle del registro.
-
----
-
-## Módulo 15: Estados de Auditoría
-
-### Historia de Usuario (El QUÉ)
-"Como **Administrador de Contrato**, quiero ver el estado actual de auditoría de cada registro (pendiente, auditando, auditada por terreno, auditada por sistema, reabierto), para saber en qué fase se encuentra cada uno."
-
-### Ficha Técnica / Blueprint (El CÓMO)
-
-*   **Campo**: `registros.estado_auditoria`
-*   **Estados Disponibles**:
-    | Estado | Descripción |
-    |--------|-------------|
-    | `pendiente` | Registro enviado, sin auditar |
-    | `auditando` | Auditoría en proceso |
-    | `auditada_terreno` | Auditoría de terreno completada |
-    | `auditada_sistema` | Auditoría de sistema completada |
-    | `reabierto` | Registro reabierto para subsanación |
-*   **Lógica Oculta**:
-    *   Estado cambia automáticamente al iniciar/completar auditoría
-    *   Estado cambia a `reabierto` al aprobar solicitud de reapertura
-    *   Se refleja en Dashboard y tablas de registros
-
----
-
-## Módulo 16: Comentarios de Auditoría
-
-### Historia de Usuario (El QUÉ)
-"Como **Administrador de Contrato**, quiero agregar comentarios durante el proceso de auditoría de un registro, para documentar observaciones y hallazgos que el contratista debe conocer."
-
-### Ficha Técnica / Blueprint (El CÓMO)
-
-*   **Modelo**: `App\Models\AuditoriaComentario`
-*   **Tabla**: `auditoria_comentarios`
-*   **Campos**:
-    *   `registro_id` - Registro auditado
-    *   `user_id` - Auditor que comenta
-    *   `comentario` - Texto del comentario
+#### 2.2 Empresas Contratistas
+*   **Modelo**: `EmpresaContratista`
+*   **Tabla**: `empresas_contratistas`
+*   **Campos Adicionales**:
+    - `rubros_especialidad` - Áreas de especialización
+    - `documentacion_validada` - Si RyCE validó sus documentos
 *   **Relaciones**:
-    *   `registro()` → `BelongsTo Registro`
-    *   `auditor()` → `BelongsTo User`
-*   **Visualización**: Los comentarios aparecen en la vista de detalle del registro tanto para Admin como para Contratista.
+    - `hasMany(User)` - Usuarios de la empresa
+    - `hasMany(Oferta)` - Ofertas presentadas
+    - `hasMany(ConsultaRespuestaLicitacion)` - Consultas realizadas
 
 ---
 
-## Módulo 17: Subsanación de Actividades
+## Módulo 3: Gestión de Licitaciones
 
 ### Historia de Usuario (El QUÉ)
-"Como **Contratista**, después de una reapertura aprobada, quiero corregir las actividades marcadas como incumplidas y registrar cuándo fueron subsanadas, para que quede constancia del cumplimiento posterior."
+"Como **Usuario Principal**, quiero crear licitaciones especificando requisitos, fechas y documentos base, para que los contratistas puedan postular."
 
 ### Ficha Técnica / Blueprint (El CÓMO)
 
-*   **Campo**: `registro_actividades.subsanado_at`
-*   **Tipo**: `timestamp`, nullable
-*   **Lógica**:
-    *   Se registra automáticamente cuando el contratista modifica una actividad durante el periodo de subsanación
-    *   Permite diferenciar entre cumplimientos originales y subsanados
-    *   Visible en reportes de auditoría
+*   **Modelo**: `Licitacion`
+*   **Tabla**: `licitaciones`
+
+#### Estados de una Licitación (State Machine)
+```
+borrador → lista_para_publicar → publicada → cerrada_ofertas → adjudicada
+                ↓                    ↓                            ↓
+         observada_por_ryce    cerrada_consultas              desierta
+                                     ↓
+                               en_evaluacion
+                                     ↓
+                                 cancelada
+```
+
+#### Campos Principales
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `codigo_licitacion` | VARCHAR(50) UNIQUE | Código único (ej: LIC-2025-001) |
+| `titulo` | VARCHAR(255) | Título de la licitación |
+| `descripcion_corta` | TEXT | Resumen breve |
+| `descripcion_larga` | LONGTEXT | Descripción completa |
+| `tipo_licitacion` | ENUM | `publica` / `privada_invitacion` |
+| `estado` | ENUM | Estado actual (10 posibles) |
+| `presupuesto_referencial` | DECIMAL(15,2) | Presupuesto estimado |
+| `moneda_presupuesto` | VARCHAR(5) | CLP, USD, etc. |
+
+#### Fechas Clave
+- `fecha_publicacion` - Cuándo se publicó
+- `fecha_inicio_consultas` / `fecha_cierre_consultas` - Período de P&R
+- `fecha_inicio_recepcion_ofertas` / `fecha_cierre_recepcion_ofertas` - Período de ofertas
+- `fecha_adjudicacion_estimada` / `fecha_adjudicacion_real`
+
+#### Relaciones
+- `belongsTo(EmpresaPrincipal)` - Quien crea la licitación
+- `belongsTo(User)` como `creador` y `revisorRyCE`
+- `belongsToMany(CategoriaLicitacion)` - Categorías asignadas
+- `hasMany(DocumentoLicitacion)` - Documentos base
+- `hasMany(RequisitoDocumentoLicitacion)` - Requisitos para contratistas
+- `hasMany(Oferta)` - Ofertas recibidas
+- `hasMany(ConsultaRespuestaLicitacion)` - Preguntas y respuestas
+
+#### Métodos de Negocio
+```php
+// Verificar si está en período de consultas
+public function enPeriodoConsultas(): bool
+
+// Verificar si acepta ofertas
+public function aceptaOfertas(): bool
+```
 
 ---
 
-## Módulo 18: Gestión de Usuarios Activos
+## Módulo 4: Documentos de Licitación
 
 ### Historia de Usuario (El QUÉ)
-"Como **Administrador**, quiero poder desactivar usuarios sin eliminarlos, para mantener el historial de sus acciones pero impedir su acceso al sistema."
+"Como **Usuario Principal**, quiero adjuntar documentos base (bases, anexos técnicos, planos) y definir qué documentos debe entregar el contratista."
 
 ### Ficha Técnica / Blueprint (El CÓMO)
 
-*   **Campo**: `users.activo`
-*   **Tipo**: `boolean`, default `true`
-*   **Lógica**:
-    *   Usuarios con `activo = false` no pueden iniciar sesión
-    *   El administrador puede activar/desactivar desde la gestión de usuarios
-    *   Los registros históricos del usuario se mantienen intactos
+#### 4.1 Documentos Base (del Principal)
+*   **Modelo**: `DocumentoLicitacion`
+*   **Tabla**: `documentos_licitacion`
+*   **Tipos**: `bases`, `anexo_tecnico`, `anexo_economico`, `plano`, `aclaracion`, `otro`
+
+#### 4.2 Requisitos para Contratistas
+*   **Modelo**: `RequisitoDocumentoLicitacion`
+*   **Tabla**: `requisitos_documentos_licitacion`
+*   **Campos**:
+    - `nombre_requisito` - Ej: "Certificado de Antecedentes Comerciales"
+    - `descripcion_requisito` - Instrucciones adicionales
+    - `es_obligatorio` - Si es mandatorio
+    - `orden` - Para ordenar en formulario
 
 ---
 
-## Estructura de Base de Datos (Actualizada)
+## Módulo 5: Ofertas y Postulación
 
-### Tablas Principales
+### Historia de Usuario (El QUÉ)
+"Como **Usuario Contratista**, quiero postular a licitaciones enviando mi oferta económica y los documentos solicitados."
 
-| Tabla | Descripción |
-|-------|-------------|
-| `users` | Usuarios del sistema (Admin/Contratista) con campo `activo` |
-| `elementos` | Elementos del programa de seguridad |
-| `actividades` | Actividades por elemento |
-| `registros` | Registros mensuales con `estado_auditoria` |
-| `registro_actividades` | Detalle con campo `subsanado_at` |
-| `evidencias` | Archivos adjuntos a las actividades |
-| `dependencias` | Catálogo de dependencias/plantas |
-| `contratista_asignaciones` | Vínculo Contratista-Servicio-Dependencia |
-| `configuraciones` | Parámetros del sistema |
-| `solicitudes_reapertura` | Solicitudes de reapertura de registros |
-| `registro_logs` | Trazabilidad de acciones sobre registros |
-| `auditoria_comentarios` | Comentarios durante la auditoría |
+### Ficha Técnica / Blueprint (El CÓMO)
 
-### Relaciones Principales
+*   **Modelo**: `Oferta`
+*   **Tabla**: `ofertas`
+*   **Restricción**: Una oferta por contratista por licitación (`UNIQUE(licitacion_id, contratista_id)`)
+
+#### Estados de una Oferta
+| Estado | Descripción |
+|--------|-------------|
+| `pendiente_precalificacion_ryce` | Esperando revisión de RyCE |
+| `precalificada_por_ryce` | Aprobada por RyCE |
+| `no_precalificada_ryce` | Rechazada por RyCE |
+| `en_evaluacion_principal` | En revisión por el Principal |
+| `adjudicada` | Ganó la licitación |
+| `no_adjudicada` | No fue seleccionada |
+| `retirada` | El contratista la retiró |
+
+#### Campos Principales
+- `monto_oferta_economica` - Monto ofertado
+- `moneda_oferta` - Moneda
+- `validez_oferta_dias` - Días de validez
+- `comentarios_precalificacion_ryce` - Observaciones de RyCE
+
+#### Documentos de Oferta
+*   **Modelo**: `DocumentoOferta`
+*   **Tipos**: `propuesta_tecnica`, `propuesta_economica`, `garantia_seriedad`, `certificado`, `otro`
+
+---
+
+## Módulo 6: Consultas y Respuestas (P&R)
+
+### Historia de Usuario (El QUÉ)
+"Como **Usuario Contratista**, quiero hacer preguntas sobre la licitación durante el período habilitado y ver las respuestas."
+
+### Ficha Técnica / Blueprint (El CÓMO)
+
+*   **Modelo**: `ConsultaRespuestaLicitacion`
+*   **Tabla**: `consultas_respuestas_licitacion`
+
+#### Lógica de Visibilidad
+| Condición | Visibilidad |
+|-----------|-------------|
+| Antes de cierre + mi pregunta | Solo yo la veo |
+| Después de cierre + `es_publica = true` | Todos los contratistas precalificados |
+| `es_publica = false` | Solo quien preguntó y respondió |
+
+#### Scopes
+```php
+// Consultas sin responder
+public function scopePendientes($query)
+
+// Consultas públicas
+public function scopePublicas($query)
+```
+
+---
+
+## Módulo 7: Notificaciones
+
+### Historia de Usuario (El QUÉ)
+"Como **Usuario del Sistema**, quiero recibir notificaciones cuando ocurran eventos importantes relacionados con mis licitaciones u ofertas."
+
+### Ficha Técnica / Blueprint (El CÓMO)
+
+*   **Modelo**: `Notificacion`
+*   **Tabla**: `notificaciones`
+
+#### Tipos de Notificación
+| Tipo | Destinatario | Trigger |
+|------|--------------|---------|
+| `LICITACION_APROBADA` | Principal | RyCE aprueba licitación |
+| `LICITACION_OBSERVADA` | Principal | RyCE observa licitación |
+| `NUEVA_CONSULTA_LICITACION` | Principal | Contratista hace pregunta |
+| `CONSULTA_RESPONDIDA` | Contratista | Principal/RyCE responde |
+| `OFERTA_PRECALIFICADA` | Contratista | RyCE precalifica oferta |
+| `OFERTA_NO_PRECALIFICADA` | Contratista | RyCE rechaza oferta |
+| `OFERTA_ADJUDICADA` | Contratista | Principal adjudica oferta |
+| `OFERTA_NO_ADJUDICADA` | Contratista | Principal adjudica a otro |
+
+#### Helper de Creación
+```php
+Notificacion::crear(
+    usuarioId: $userId,
+    tipo: 'LICITACION_APROBADA',
+    mensaje: 'Su licitación ha sido aprobada',
+    url: '/licitaciones/123'
+);
+```
+
+---
+
+## Modelo de Datos (ERD Simplificado)
 
 ```
-User (1) ──── (N) Registro
-Registro (1) ──── (N) RegistroActividad
-Registro (1) ──── (N) RegistroLog
-Registro (1) ──── (N) SolicitudReapertura
-Registro (1) ──── (N) AuditoriaComentario
-RegistroActividad (1) ──── (N) Evidencia
-Elemento (1) ──── (N) Actividad
+┌─────────────────────┐     ┌─────────────────────┐
+│  empresas_principales│     │ empresas_contratistas│
+├─────────────────────┤     ├─────────────────────┤
+│ id, razon_social    │     │ id, razon_social    │
+│ rut, direccion      │     │ rut, documentacion  │
+└─────────┬───────────┘     └──────────┬──────────┘
+          │                            │
+          │ 1:N                        │ 1:N
+          ▼                            ▼
+┌─────────────────────┐     ┌─────────────────────┐
+│       users         │     │       users         │
+└─────────┬───────────┘     └──────────┬──────────┘
+          │                            │
+          │ 1:N (creador)              │ 1:N (presenta)
+          ▼                            ▼
+┌─────────────────────────────────────────────────┐
+│                   licitaciones                   │
+├─────────────────────────────────────────────────┤
+│ id, codigo, titulo, estado, fechas...           │
+│ requiere_precalificacion, responsable_precal... │
+└─────────────────────┬───────────────────────────┘
+                      │
+      ┌───────────────┼───────────────┬───────────────┐
+      │ 1:N           │ 1:N           │ 1:N           │ 1:N
+      ▼               ▼               ▼               ▼
+┌──────────┐   ┌──────────┐   ┌──────────────┐ ┌───────────────┐
+│ documentos│   │ ofertas  │   │ consultas_   │ │ precalific.   │
+│ licitacion│   │          │   │ respuestas   │ │ contratistas  │
+└──────────┘   └────┬─────┘   └──────────────┘ └───────────────┘
+                    │
+                    │ 1:N
+                    ▼
+              ┌──────────┐
+              │documentos│
+              │ oferta   │
+              └──────────┘
+```
+
+---
+
+## Módulo 8: Precalificación de Contratistas
+
+### Historia de Usuario (El QUÉ)
+"Como **Empresa Principal o Admin RyCE**, quiero que los contratistas se precalifiquen antes de postular a ciertas licitaciones, revisando su documentación y aprobando/rechazando su participación."
+
+"Como **Usuario Contratista**, quiero solicitar precalificación para licitaciones que lo requieran, adjuntando los documentos necesarios."
+
+### Ficha Técnica / Blueprint (El CÓMO)
+
+*   **Modelo**: `PrecalificacionContratista`
+*   **Tabla**: `precalificaciones_contratistas`
+
+#### Estados de Precalificación
+| Estado | Descripción |
+|--------|-------------|
+| `pendiente` | Solicitud enviada, esperando revisión |
+| `aprobada` | Contratista puede postular |
+| `rechazada` | Contratista no puede postular (puede rectificar) |
+| `rectificando` | Contratista corrigió y reenvió |
+
+#### Campos Principales
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `licitacion_id` | FK | Licitación relacionada |
+| `contratista_id` | FK | Empresa contratista |
+| `estado` | ENUM | Estado actual |
+| `fecha_solicitud` | DATETIME | Cuándo se solicitó |
+| `fecha_resolucion` | DATETIME | Cuándo se aprobó/rechazó |
+| `revisado_por_usuario_id` | FK | Quién revisó |
+| `tipo_revisor` | ENUM | `ryce` / `principal` |
+| `motivo_rechazo` | TEXT | Razón del rechazo |
+| `comentarios_contratista` | TEXT | Comentarios del contratista |
+| `comentarios_rectificacion` | TEXT | Comentarios de rectificación |
+
+#### Campos en Licitación
+- `requiere_precalificacion` (BOOLEAN) - Si la licitación requiere precalificación
+- `responsable_precalificacion` (ENUM: `ryce`, `principal`, `ambos`) - Quién puede precalificar
+- `fecha_inicio_precalificacion` / `fecha_fin_precalificacion` - Plazo para precalificarse
+
+#### Requisitos de Precalificación
+Los requisitos (`requisitos_documentos_licitacion`) ahora tienen campo `es_precalificacion`:
+- Si `es_precalificacion = true`: Requisito para la etapa de precalificación
+- Si `es_precalificacion = false`: Requisito para la postulación/oferta
+
+#### Flujo de Precalificación
+```
+Contratista ve licitación con requiere_precalificacion = true
+    ↓
+No puede postular directamente → Debe "Solicitar Precalificación"
+    ↓
+Carga documentos requeridos (según requisitos con es_precalificacion = true)
+    ↓
+RyCE o Principal revisa → Aprueba o Rechaza
+    ↓
+Si Aprobada: Contratista puede postular oferta
+Si Rechazada: Contratista puede Rectificar y Reenviar
+```
+
+#### Componentes Livewire
+| Componente | Ubicación | Función |
+|------------|-----------|---------|
+| `SolicitudPrecalificacion` | `Contratista/Licitaciones/` | Formulario de solicitud |
+| `Index` | `Admin/Precalificaciones/` | Listado de precalificaciones |
+| `Revisar` | `Admin/Precalificaciones/` | Revisión con aprobar/rechazar |
+
+#### Rutas
+- `/contratista/licitaciones/{id}/precalificar` - Solicitud de precalificación
+- `/admin/precalificaciones` - Panel de revisión Admin
+- `/admin/precalificaciones/{id}` - Detalle y resolución
+
+#### Métodos de Negocio en Licitación
+```php
+// Verificar si contratista puede postular (considera precalificación)
+public function puedePostular(EmpresaContratista $contratista): bool
+
+// Obtener precalificación de un contratista
+public function getPrecalificacion(EmpresaContratista $contratista): ?PrecalificacionContratista
 ```
 
 ---
@@ -508,10 +382,8 @@ Elemento (1) ──── (N) Actividad
 
 | Versión | Fecha | Cambios Principales |
 | :--- | :--- | :--- |
-| **v1.0** | 16/12/2024 | Lanzamiento inicial con todos los módulos base. |
-| **v1.1** | 16/12/2024 | **Múltiples Evidencias**: Soporte para hasta 4 archivos por actividad con selección individual. <br> **Botones Ver/Descargar**: Separados para Admin y Contratista. |
-| **v1.2** | 16/12/2024 | **CRUD Dependencias**: Gestión de plantas desde admin. <br> **Filtros y Ordenamiento**: Tabla de registros con filtro por dependencia y columnas ordenables. |
-| **v1.3** | 16/12/2024 | **Promedio Anual**: Nueva columna calculada en tablas. <br> **UI Mejorada**: Spinner de carga, botones más grandes, criterios explícitos. |
-| **v1.4** | 06/01/2026 | **Gestión de Usuarios para Contratistas**: Implementación de trabajadores operativos (`usuario_contratista`) con acceso restringido por asignación. <br> **Jerarquía de Datos**: Los registros se guardan bajo el ID de la empresa madre para consolidación total. <br> **Refinamiento UI Admin**: Tabla de contratistas extra-ancha (Full Width), optimización de anchos de columna y eliminación de acciones redundantes. |
-| **v1.5** | 12/01/2026 | **Sistema de Solicitudes de Reapertura**: Flujo completo para que contratistas soliciten reabrir registros auditados, con aprobación/rechazo por admin y fecha límite de subsanación. <br> **Trazabilidad Completa**: Logs detallados de todas las acciones sobre registros con exportación a PDF. <br> **Estados de Auditoría**: Campo `estado_auditoria` para seguimiento del proceso. <br> **Comentarios de Auditoría**: Sistema para que auditores documenten hallazgos. <br> **Subsanación de Actividades**: Campo `subsanado_at` para registrar correcciones. <br> **Usuarios Activos**: Campo booleano para desactivar usuarios sin eliminarlos. <br> **Notificaciones por Email**: Emails automáticos para solicitudes de reapertura (creada y resuelta). |
+| **v0.1** | 22/12/2025 | Creación proyecto Laravel. Instalación Breeze + Livewire + Spatie Permissions. |
+| **v0.2** | 22/12/2025 | Creación de 5 migraciones y 11 modelos Eloquent. Renombrado "Mandante" → "Principal". |
+| **v0.3** | 23/12/2025 | Módulo Contratista: Búsqueda y vista de licitaciones. Creación de ofertas. |
+| **v0.4** | 24/12/2025 | **Módulo Precalificación completo**: Tabla `precalificaciones_contratistas`. Campo `responsable_precalificacion` en licitaciones. Formulario de solicitud para contratista con documentos por requisito. Panel Admin para revisar/aprobar/rechazar. Flujo de rectificación. Separación de requisitos de precalificación vs postulación. Filtro de precalificación en tabla Admin. Mejoras UI: cabeceras fijas, scroll, filas entramadas. |
 

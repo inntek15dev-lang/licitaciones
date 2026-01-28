@@ -1,0 +1,16 @@
+<diagram type="flowchart" id="flow-ofertas" title="Gestión de Ofertas">
+  <metadata><module>Ofertas</module></metadata>
+  <roles>
+    <role id="contratista" name="Contratista" color="#22c55e"/>
+    <role id="sistema" name="Sistema" color="#3b82f6"/>
+  </roles>
+  <nodes>
+    <node id="start" type="start" x="100" y="50" label="Iniciar Postulación" role="contratista"/>
+    <node id="docs" type="process" x="100" y="150" label="Cargar Documentos" role="contratista"/>
+    <node id="submit" type="end" x="100" y="250" label="Enviar Oferta" role="contratista"/>
+  </nodes>
+  <connections>
+    <connect from="start" to="docs"/>
+    <connect from="docs" to="submit"/>
+  </connections>
+</diagram>
