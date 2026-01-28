@@ -1,0 +1,25 @@
+[x] Project Research & Cleanup
+    [x] Back up existing migrations to `_backup_migraciones_obsoletas/`
+    [x] Consolidate 19 base type tables into `Tier 1A - Generic Base`
+    [x] Verify table existence in `2026_01_23_110138_create_generic_base_tables_tier_1a.php`
+[x] Migration Transformation & Tiered Refactor
+    [x] Create/Verify Tiered Migration files (1A to 9)
+    [x] Fix circular references using "Late Binding" foreign keys in Tier 9
+    [x] Resolve `Identifier name is too long` errors in Tier 6 assignment tables
+    [x] Add missing `tipos_embarcacion` to Tier 1A
+    [x] Add systemic `cache` table migration
+    [x] Fix `trusted_devices` missing `remember_token` column
+    [x] Restore missing `popups` and `popup_visualizaciones` tables (Tier 7)
+[x] Data Seeder Standardization
+    [x] Rename and refactor Seeders to match Tiers (1ABaseSeeder, etc.)
+    [x] Fix relational integrity in `Tier3MandanteSeeder`
+    [x] Resolve primary key collisions in Geographic seeders
+    [x] Correct column/value mismatches in User and Worker seeders
+    [x] Integrate all seeders into `DatabaseSeeder.php`
+[x] Skill & Knowledge Codification
+    [x] Update `Laravel Data Architect` skill with 11-tier best practices
+[x] Verification & Final Setup
+    [x] Execute full `migrate:fresh --seed` successfully
+    [x] Verify database integrity and constraint consistency
+    [x] Synchronize `localhost:8000` across `.env` and Vite
+    [x] Document final architecture in `walkthrough.md`

@@ -1,0 +1,24 @@
+# Walkthrough - Environment and Connectivity Assurance Skill Integration
+
+I have successfully integrated the `Environment and Connectivity Assurance` skill (`LACG-ENV-v2.0`) into the project.
+
+## Changes Made
+
+### Skill Definition
+- Created [SKILL.md](file:///c:/laragon/www/abastible/.agent/skills/env-assurance/SKILL.md) which includes:
+    - **E-V2H:** Strict parity environment integrity rules.
+    - **T-CAS:** Connectivity assurance protocols for DB and Vite.
+    - **L-SAPE:** Autonomous adaptation logic for drift and permissions.
+
+### Helper Scripts
+- Created [check_connectivity.php](file:///c:/laragon/www/abastible/.agent/skills/env-assurance/scripts/check_connectivity.php) to automate connectivity validation as per the T-CAS module.
+
+## Verification Results
+
+### Connectivity Check
+I performed a check to ensure the script correctly identifies the environment settings:
+- The script successfully reads `.env` variables.
+- It attempts to connect to the database and Vite port, providing recovery suggestions if they are unreachable.
+
+### Skill Accessibility
+- The skill is structured correctly and located in the project's `.agent/skills` directory, making it available for future operations.

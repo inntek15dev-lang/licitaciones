@@ -1,0 +1,6 @@
+{
+  "artifactType": "ARTIFACT_TYPE_WALKTHROUGH",
+  "summary": "Guía completa sobre consideraciones para trabajar con enlaces simbólicos en Windows para proyectos Laravel/Node.js. Incluye diagnóstico del entorno actual, problemas comunes, soluciones y configuraciones recomendadas para Vite y npm.",
+  "updatedAt": "2026-01-26T13:09:49.460219600Z",
+  "version": "1"
+}

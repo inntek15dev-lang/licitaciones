@@ -1,0 +1,37 @@
+# Database Refactor Walkthrough
+
+The project is now fully completed, with both the database architecture and the development workflow (Skill) optimized for the current state.
+
+## Final Architecture: An 11-Tier Migration System
+
+The migrations are organized into tiers to manage complexity and dependencies:
+
+1.  **Tier 1A-1C**: Foundation (Generic Types, Rules, Configs, `cache`).
+2.  **Tier 1D**: Specialized foundational tables (`etnias`).
+3.  **Tier 2-3**: Geographic (Regions/Comunas) and Organizational (Mandantes) foundations.
+4.  **Tier 4-5**: Logic and Entities (Contractors, Rules, Workers, Vehicles).
+5.  **Tier 6-7**: Complex Assignments and System Security. (Now includes `trusted_devices` with all necessary columns).
+6.  **Tier 9**: **Late Binding Constraints**. Resolves circular references between [users](file:///d:/OVAL%20-ROOT/git-master/master/master/app/Models/Mandante.php#37-41) and [mandantes](file:///d:/OVAL%20-ROOT/git-master/master/master/app/Models/Contratista.php#57-58)/[contratistas](file:///d:/OVAL%20-ROOT/git-master/master/master/app/Models/Dependencia.php#45-49).
+
+## Key Technical Solutions
+
+- **Late Binding Foreign Keys**: Decoupled constraints that reference tables created in later tiers.
+- **Identifier Length Fixes**: Shortened constraint names (e.g., `tv_uom_fk`) to comply with MySQL's 64-char limit.
+- **Seeder Standardization**: Refactored all seeders (10+ classes) to follow the tiered data population strategy.
+- **Knowledge Codification**: The [.gemini/skills/laravel-data-architect/SKILL.md](file:///d:/OVAL%20-ROOT/git-master/master/master/.gemini/skills/laravel-data-architect/SKILL.md) has been updated to include these best practices, ensuring all future refactors follow this robust pattern.
+
+## Verification Success
+
+All migrations and seeders now execute flawlessly:
+
+```bash
+php artisan migrate:fresh --seed
+# Output: ¡Base de datos sembrada con datos iniciales y tipos de documento!
+```
+
+> [!IMPORTANT]
+> - **Trusted Devices Fixed**: Added `remember_token` to Tier 7.
+> - **Skill Updated**: Modern 11-tier orchestration is now the standard in `laravel-data-architect`.
+> - **System Admin User**: `malarcon@asemchile.cl`
+
+The system is fully initialized and the development toolset is updated to reflect this state.

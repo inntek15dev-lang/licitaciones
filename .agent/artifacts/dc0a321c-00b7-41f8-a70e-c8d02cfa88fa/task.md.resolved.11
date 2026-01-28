@@ -1,0 +1,24 @@
+# Task: SQL to Laravel Transformation
+
+- [x] Analyze SQL script and define migration tiers
+- [x] Tier 1: Base & Generic Tables
+    - [x] Create Tier 1A Migrations & Seeders
+    - [x] Create Tier 1B Migrations & Seeders
+    - [x] Create Tier 1C Migrations & Seeders
+    - [x] Create Tier 1D Migrations & Seeders
+- [x] Tier 2 & 3: Mandantes & Org Structures
+    - [x] Create Tier 2 Migrations & Seeders
+    - [x] Create Tier 3 Migrations & Seeders
+- [x] Tier 4: Relations & Rules
+    - [x] Create Tier 4 Migrations & Seeders
+- [x] Tier 5: Primary Entities (Workers, Vehicles, etc.)
+    - [x] Create Tier 5 Migrations & Seeders
+- [/] Tier 6: Assignments & Linking Tables
+    - [x] Create Tier 6 Migrations & Seeders
+    - [ ] Create Models & Requests
+- [ ] Tier 7: Users & System Logs
+    - [ ] Create Migrations
+    - [ ] Create Models
+- [ ] Verification & Cleanup
+    - [ ] Run migrations and seeders
+    - [ ] Final code review

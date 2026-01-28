@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentación del Proyecto</title>
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1 id="app-title">Cargando...</h1>
+                <span class="version" id="version">-</span>
+            </div>
+            <!-- ... nav menu remains same ... -->
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" data-section="executive">
+                    <span class="icon">📈</span> Resumen Gerencial
+                </a>
+                <a href="#" class="nav-item" data-section="kanban">
+                    <span class="icon">📋</span> Tablero Kanban
+                </a>
+                <a href="#" class="nav-item" data-section="modules">
+                    <span class="icon">📦</span> Módulos
+                </a>
+                <a href="#" class="nav-item" data-section="er-diagram">
+                    <span class="icon">🗄️</span> Diagrama ER
+                </a>
+                <a href="#" class="nav-item" data-section="diagrams">
+                    <span class="icon">🔀</span> Diagramas de Flujo
+                </a>
+                <a href="#" class="nav-item" data-section="usecases">
+                    <span class="icon">👤</span> Casos de Uso
+                </a>
+                <a href="#" class="nav-item" data-section="rules">
+                    <span class="icon">⚖️</span> Reglas de Negocio
+                </a>
+                <a href="#" class="nav-item" data-section="changelog">
+                    <span class="icon">📜</span> Changelog
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <p>Última actualización:</p>
+                <span id="last-updated">-</span>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Executive Summary Section (Already generic enough, app.js populates it) -->
+            <section id="executive" class="section active">
+                <header class="section-header">
+                    <h2>Resumen Gerencial</h2>
+                    <p id="project-description">Cargando...</p>
+                </header>
+                <!-- ... stats grid remains same ... -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📦</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="total-modules">0</span>
+                            <span class="stat-label">Módulos Totales</span>
+                        </div>
+                    </div>
+                    <div class="stat-card completed">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="completed-modules">0</span>
+                            <span class="stat-label">Completados</span>
+                        </div>
+                    </div>
+                    <div class="stat-card pending">
+                        <div class="stat-icon">🔄</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="pending-modules">0</span>
+                            <span class="stat-label">Pendientes</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="progress-percent">0%</span>
+                            <span class="stat-label">Progreso General</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+                </div>
+
+                <div class="executive-grid">
+                    <div class="exec-card">
+                        <h3>🎯 Estado del Proyecto</h3>
+                        <div class="status-indicator" id="project-status">
+                            <span class="status-dot green"></span>
+                            <span>En Desarrollo Activo</span>
+                        </div>
+                        <p class="status-note">Sistema operativo con funcionalidades core implementadas</p>
+                    </div>
+                    <div class="exec-card">
+                        <h3>⚠️ Decisiones Pendientes</h3>
+                        <span class="big-number" id="pending-decisions">0</span>
+                        <p class="status-note">Requieren respuesta</p>
+                    </div>
+                    <div class="exec-card">
+                        <h3>🔧 Stack Tecnológico</h3>
+                        <div class="stack-grid" id="stack-grid"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Kanban Section (Generic) -->
+            <section id="kanban" class="section">
+                <header class="section-header">
+                    <h2>Tablero Kanban</h2>
+                    <p>Vista de funcionalidades por estado de desarrollo</p>
+                </header>
+                <div class="kanban-board" id="kanban-board"></div>
+            </section>
+
+            <!-- Modules Section (Generic) -->
+            <section id="modules" class="section">
+                <header class="section-header">
+                    <h2>Módulos del Sistema</h2>
+                    <div class="filter-bar">
+                        <button class="filter-btn active" data-filter="all">Todos</button>
+                        <button class="filter-btn" data-filter="completed">Completados</button>
+                        <button class="filter-btn" data-filter="in-progress">En Progreso</button>
+                        <button class="filter-btn" data-filter="pending">Pendientes</button>
+                    </div>
+                </header>
+                <div class="modules-grid" id="modules-grid"></div>
+            </section>
+
+            <!-- ER Diagram Section -->
+            <section id="er-diagram" class="section">
+                <header class="section-header">
+                    <h2>Diagrama Entidad-Relación</h2>
+                    <p>Estructura completa de la base de datos con tablas, campos, tipos y relaciones</p>
+                </header>
+                <div class="er-container" id="er-container">
+                    <!-- SVG will be loaded here by app.js -->
+                    <span class="text-muted">Cargando diagrama ER...</span>
+                </div>
+            </section>
+
+            <!-- Diagrams Section (Refactored) -->
+            <section id="diagrams" class="section">
+                <header class="section-header">
+                    <h2>Diagramas de Flujo</h2>
+                    <div class="diagram-selector" id="flow-selector">
+                        <!-- Populated dynamically by app.js -->
+                        <span class="text-muted">Cargando diagramas...</span>
+                    </div>
+                </header>
+                <div class="diagram-container">
+                    <canvas id="flow-canvas" width="700" height="900"></canvas>
+                </div>
+            </section>
+
+            <!-- Use Cases Section (Diagram + List) -->
+            <section id="usecases" class="section">
+                <header class="section-header">
+                    <h2>Casos de Uso</h2>
+                    <div class="diagram-selector" id="usecase-selector">
+                        <!-- Populated dynamically by app.js from diagrams.json -->
+                        <span class="text-muted">Cargando diagramas...</span>
+                    </div>
+                </header>
+                <div class="diagram-container">
+                    <canvas id="usecase-canvas" width="500" height="700"></canvas>
+                </div>
+                <div class="usecases-container" id="usecases-list">
+                    <!-- List populated by app.js from usecases.json -->
+                </div>
+            </section>
+
+            <!-- Changelog Section -->
+            <section id="changelog" class="section">
+                <header class="section-header">
+                    <h2>Historial de Cambios</h2>
+                </header>
+                <div class="timeline" id="changelog-timeline"></div>
+            </section>
+            <!-- Business Rules Section -->
+            <section id="rules" class="section">
+                <header class="section-header">
+                    <h2>Reglas de Negocio</h2>
+                    <p>Especificaciones y lógicas que rigen el comportamiento del sistema</p>
+                </header>
+                <div class="rules-container">
+                    <div class="rules-table-wrapper">
+                        <table class="rules-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Título</th>
+                                    <th>Descripción</th>
+                                    <th>Tipo</th>
+                                    <th>Módulo</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rules-table-body">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="assets/diagram-renderer.js"></script>
+    <script src="assets/app.js"></script>
+</body>
+
+</html>

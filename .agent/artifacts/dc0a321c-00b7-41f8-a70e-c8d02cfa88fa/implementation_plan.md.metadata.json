@@ -1,0 +1,6 @@
+{
+  "artifactType": "ARTIFACT_TYPE_IMPLEMENTATION_PLAN",
+  "summary": "Tiered migration strategy for transforming SQL to Laravel. Organization by dependency tiers. Core components include Migrations, Models, Controllers, and Requests.",
+  "updatedAt": "2026-01-23T13:59:37.410852800Z",
+  "version": "1"
+}

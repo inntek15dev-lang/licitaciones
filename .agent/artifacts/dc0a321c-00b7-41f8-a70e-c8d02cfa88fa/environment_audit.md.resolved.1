@@ -1,0 +1,38 @@
+# Environment & Project Stability Audit
+
+This report detail inconsistencies found in the local Laragon environment and the project configuration that are affecting stability and UI visibility.
+
+## 1. UI & Sidebar Inconsistency
+- **Finding**: The sidebar uses `@if(Auth::user()->hasRole('...'))` to display menu items.
+- **Cause**: Initial seeders populated the [users](file:///d:/OVAL%20-ROOT/git-master/master/master/app/Models/Mandante.php#37-41) table but did **not** assign the necessary Spatie roles to them.
+- **Solution**: Refactored [Tier7UserSeeder.php](file:///d:/OVAL%20-ROOT/git-master/master/master/database/seeders/Tier7UserSeeder.php) to use the [User](file:///d:/OVAL%20-ROOT/git-master/master/master/app/Models/User.php#14-125) model and the `assignRole()` method.
+- **Action Required**: Run `php artisan migrate:fresh --seed` to correctly initialize users with their roles.
+
+## 2. El "Switcher" de Assets (Vite vs Prod)
+- **Cómo funciona**: Laravel usa la directiva `@vite` para cargar estilos.
+  - **Modo Desarrollo (`npm run dev`)**: Crea un archivo [public/hot](file:///d:/OVAL%20-ROOT/git-master/master/master/public/hot). Laravel detecta este archivo y busca los estilos en `http://127.0.0.1:5173`. Si el navegador no puede conectar a ese puerto (por bloqueos de seguridad o firewall), los estilos "desaparecen".
+  - **Modo Producción (`artisan serve` solo)**: Si **no** existe [public/hot](file:///d:/OVAL%20-ROOT/git-master/master/master/public/hot), Laravel busca en [public/build/manifest.json](file:///d:/OVAL%20-ROOT/git-master/master/master/public/build/manifest.json) y carga los archivos compilados.
+- **Causa del Problema**: Al ejecutar `npm run dev`, se activa el modo "hot", pero tu navegador probablemente está bloqueando la conexión al puerto `5173` o hay una discrepancia con el `APP_URL`.
+- **Solución implementada**: Forzado de host a `127.0.0.1` en [vite.config.js](file:///d:/OVAL%20-ROOT/git-master/master/master/vite.config.js).
+- **Recomendación**: Si usas un nombre de dominio en Laragon (ej: `http://master.test`), el `APP_URL` en [.env](file:///d:/OVAL%20-ROOT/git-master/master/master/.env) debe ser **exactamente ese**.
+
+## 3. Environment Dependencies (PHP)
+- **Finding**: Critical extensions for Laravel 12 (like `zip`) were disabled in [C:\php\php.ini](file:///C:/php/php.ini).
+- **Cause**: Default PHP installation in Laragon may come with minimal extensions enabled for performance.
+- **Action Taken**: Enabled `extension=zip` in the global [php.ini](file:///C:/php/php.ini).
+- **Recommendation**: Ensure `openssl`, `mbstring`, `intl`, and `pdo_mysql` are also enabled (verified they are currently active).
+
+## 4. Stability Summary Table
+
+| Component | Status | Issue | Resolution |
+|-----------|--------|-------|------------|
+| RBAC | ⚠️ Pending Reset | Missing user-role mapping | Updated [Tier7UserSeeder](file:///d:/OVAL%20-ROOT/git-master/master/master/database/seeders/Tier7UserSeeder.php#8-55) |
+| Assets | ⚠️ Verification | Host/URL mismatch | Updated [vite.config.js](file:///d:/OVAL%20-ROOT/git-master/master/master/vite.config.js) & [.env](file:///d:/OVAL%20-ROOT/git-master/master/master/.env) |
+| Infrastructure | ✅ Fixed | Missing `zip` extension | Modified [php.ini](file:///C:/php/php.ini) |
+
+> [!IMPORTANT]
+> To stabilize the project, please execute a full reset of the state:
+> ```bash
+> php artisan migrate:fresh --seed
+> npm run dev
+> ```

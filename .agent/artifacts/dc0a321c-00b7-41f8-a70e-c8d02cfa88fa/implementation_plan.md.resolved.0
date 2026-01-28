@@ -1,0 +1,20 @@
+# Plan: Agregar Senior Laravel Data Architect Skill
+
+He agregado las instrucciones para el rol de **Senior Laravel Data Architect** en el sistema.
+
+## Cambios Realizados
+
+### [Component Name]
+
+#### [NEW] [SKILL.md](file:///d:/OVAL%20-ROOT/git-master/master/master/.gemini/skills/laravel-data-architect/SKILL.md)
+- Define el rol, objetivos y reglas para transformar SQL a Laravel.
+- Incluye validaciones previas, mapeo de dependencias y formatos de salida.
+
+## Verificación
+
+### Automated Tests
+- No aplica (es un archivo de instrucciones).
+
+### Manual Verification
+- Verificar que el archivo existe en la ruta especificada.
+- Confirmar que la versión de Laravel detectada (12.0) es correcta según el [composer.json](file:///d:/OVAL%20-ROOT/git-master/master/master/composer.json).

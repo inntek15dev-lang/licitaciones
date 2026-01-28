@@ -1,0 +1,39 @@
+# Environment & Project Stability Audit
+
+This report detail inconsistencies found in the local Laragon environment and the project configuration that are affecting stability and UI visibility.
+
+## 1. UI & Sidebar Inconsistency
+- **Finding**: The sidebar uses `@if(Auth::user()->hasRole('...'))` to display menu items.
+- **Cause**: Initial seeders populated the [users](file:///d:/OVAL%20-ROOT/git-master/master/master/app/Models/Mandante.php#37-41) table but did **not** assign the necessary Spatie roles to them.
+- **Solution**: Refactored [Tier7UserSeeder.php](file:///d:/OVAL%20-ROOT/git-master/master/master/database/seeders/Tier7UserSeeder.php) to use the [User](file:///d:/OVAL%20-ROOT/git-master/master/master/app/Models/User.php#14-125) model and the `assignRole()` method.
+- **Action Required**: Run `php artisan migrate:fresh --seed` to correctly initialize users with their roles.
+
+## 2. Asset Loading (Vite) Issues
+- **Finding**: `npm run dev` fails to load styles because Vite defaults to IPv6 (`[::1]`), which is often incompatible with Laragon's loopback handling.
+- **Secondary Finding**: `APP_URL` in [.env](file:///d:/OVAL%20-ROOT/git-master/master/master/.env) was missing the protocol (`//localhost:8000`), confusing Vite's URL generation.
+- **Cause**: Host mismatch between the Vite dev server and the web server's request.
+- **Solutions Implemented**:
+  - Corrected `APP_URL=http://localhost:8000` in [.env](file:///d:/OVAL%20-ROOT/git-master/master/master/.env).
+  - Forced Vite to bind to `127.0.0.1` in [vite.config.js](file:///d:/OVAL%20-ROOT/git-master/master/master/vite.config.js).
+- **Action Required**: Stop `npm run dev`, verify `APP_URL` matches your browser URL (e.g., if you use `http://master.test`, change [.env](file:///d:/OVAL%20-ROOT/git-master/master/master/.env) accordingly) and restart the dev server.
+
+## 3. Environment Dependencies (PHP)
+- **Finding**: Critical extensions for Laravel 12 (like `zip`) were disabled in [C:\php\php.ini](file:///C:/php/php.ini).
+- **Cause**: Default PHP installation in Laragon may come with minimal extensions enabled for performance.
+- **Action Taken**: Enabled `extension=zip` in the global [php.ini](file:///C:/php/php.ini).
+- **Recommendation**: Ensure `openssl`, `mbstring`, `intl`, and `pdo_mysql` are also enabled (verified they are currently active).
+
+## 4. Stability Summary Table
+
+| Component | Status | Issue | Resolution |
+|-----------|--------|-------|------------|
+| RBAC | ⚠️ Pending Reset | Missing user-role mapping | Updated `Tier7UserSeeder` |
+| Assets | ⚠️ Verification | Host/URL mismatch | Updated [vite.config.js](file:///d:/OVAL%20-ROOT/git-master/master/master/vite.config.js) & [.env](file:///d:/OVAL%20-ROOT/git-master/master/master/.env) |
+| Infrastructure | ✅ Fixed | Missing `zip` extension | Modified [php.ini](file:///C:/php/php.ini) |
+
+> [!IMPORTANT]
+> To stabilize the project, please execute a full reset of the state:
+> ```bash
+> php artisan migrate:fresh --seed
+> npm run dev
+> ```
