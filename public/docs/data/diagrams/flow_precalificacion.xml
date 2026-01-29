@@ -1,0 +1,18 @@
+<diagram type="flowchart" id="flow-precalificacion" title="Precalificación">
+  <metadata><module>Precalificacion</module></metadata>
+  <roles>
+    <role id="contratista" name="Contratista" color="#22c55e"/>
+    <role id="admin" name="Administrador" color="#ef4444"/>
+  </roles>
+  <nodes>
+    <node id="request" type="start" x="100" y="50" label="Solicitar Precalificación" role="contratista"/>
+    <node id="review" type="decision" x="100" y="150" label="Revisar Antecedentes" role="admin"/>
+    <node id="approve" type="end" x="50" y="250" label="Aprobar" role="admin"/>
+    <node id="reject" type="end" x="200" y="250" label="Rechazar" role="admin"/>
+  </nodes>
+  <connections>
+    <connect from="request" to="review"/>
+    <connect from="review" to="approve" label="OK"/>
+    <connect from="review" to="reject" label="Falla"/>
+  </connections>
+</diagram>

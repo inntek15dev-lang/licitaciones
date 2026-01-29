@@ -1,0 +1,85 @@
+{
+    "modules": [
+        {
+            "id": "auth",
+            "name": "Autenticación",
+            "description": "Control de Acceso (Admin/Principal/Contratista)",
+            "status": "completed",
+            "progress": 100,
+            "features": [
+                {
+                    "name": "Auth::routes",
+                    "status": "completed"
+                },
+                {
+                    "name": "Session Management",
+                    "status": "completed"
+                }
+            ]
+        },
+        {
+            "id": "maestros",
+            "name": "Maestros",
+            "description": "CRUD de Entidades Base",
+            "status": "completed",
+            "progress": 100,
+            "features": [
+                {
+                    "name": "Admin: Categorías",
+                    "status": "completed"
+                },
+                {
+                    "name": "Admin: Empresas",
+                    "status": "completed"
+                }
+            ]
+        },
+        {
+            "id": "licitaciones",
+            "name": "Licitaciones",
+            "description": "Ciclo de Negocio Principal",
+            "status": "completed",
+            "progress": 95,
+            "features": [
+                {
+                    "name": "Principal: Crear/Publicar",
+                    "status": "completed"
+                },
+                {
+                    "name": "Contratista: Ver/Buscar",
+                    "status": "completed"
+                }
+            ]
+        },
+        {
+            "id": "ofertas",
+            "name": "Ofertas",
+            "description": "Postulaciones de Contratistas",
+            "status": "in-progress",
+            "progress": 85,
+            "features": [
+                {
+                    "name": "Contratista: Enviar Oferta",
+                    "status": "completed"
+                },
+                {
+                    "name": "Admin: Evaluar (Pendiente)",
+                    "status": "pending"
+                }
+            ]
+        },
+        {
+            "id": "precalificacion",
+            "name": "Precalificación",
+            "description": "Gestión de Proveedores",
+            "status": "completed",
+            "progress": 100,
+            "features": [
+                {
+                    "name": "Solicitud -> Revisión -> Aprobación",
+                    "status": "completed"
+                }
+            ]
+        }
+    ]
+}

@@ -62,11 +62,11 @@ public/docs/
 
 | Method | Source | Parses | Output |
 |--------|--------|--------|--------|
-| `updateProjectMetadata()` | `.agent/context/*.md` | H1 titles, first paragraph | `project.json` |
-| `updateModulesFromCode()` | `app/Models/*` | Model file names | `modules.json` |
+| `updateProjectMetadata()` | `.agent/context/*.md` | H1 titles, first paragraph. **ALWAYS set `lastUpdated` to NOW**. | `project.json` |
+| `updateModulesFromCode()` | `app/Models/*`, `app/Http/Controllers/*.php`, `app/Livewire/**/*.php` | Class names, folder structure | `modules.json` |
 | `updateDiagrams()` | `.agent/docs/*.xml` | XML diagram files | `diagrams.json` |
 | `extractBusinessRules()` | `.agent/context/*.md`, `.agent/docs/*.md` | Lines with "regla", "restricción", "permiso" | `rules.json` |
-| `extractUseCases()` | `.agent/docs/*.md`, `app/Http/Controllers/*` | H3 headings, public methods | `usecases.json` |
+| `extractUseCases()` | `.agent/docs/*.md`, `app/Http/Controllers/*`, `routes/web.php` | H3 headings, public methods, route definitions | `usecases.json` |
 | `extractKanban()` | `.agent/context/*.md` | "TODO", "Pendiente", "Completado" sections | `kanban.json` |
 | `extractSkillsInventory()` | `.agent/skills/*/SKILL.md` | YAML frontmatter, H2/H3 sections | `skills.json` |
 
@@ -130,8 +130,51 @@ The `public/docs/index.html` viewer MUST include a **"Skills & Automation"** sec
 3.  **Update**: Refresh ALL JSON files from sources.
 4.  **Notify**: If significant changes (new modules), notify the user.
 
+### 4.1.2 Reverse Engineering Logic (Livewire -> Flowchart)
+To ensure diagrams reflect the *actual* implemented logic, use this reverse engineering strategy:
+
+1.  **Scan Target**: `app/Livewire/**/*.php`
+2.  **Role Inference**:
+    - Namespace `Admin\*` -> Role: `admin` (Color: Red)
+    - Namespace `Contratista\*` -> Role: `contratista` (Color: Green)
+    - Namespace `Principal\*` -> Role: `principal` (Color: Blue)
+3.  **Flow Detection**:
+    - `mount()` -> **Start Node** ("Inicia Componente")
+    - `render()` -> **View Node** ("Muestra Vista")
+    - `save()`, `submit()`, `store()` -> **Action Node** ("Guarda/Procesa")
+    - `delete()`, `destroy()` -> **Hazard Node** ("Elimina Registro")
+    - `validate()` calls -> **Decision Node** ("Valida Datos")
+    - **Controllers**: `index()` (List), `show()` (View), `store()` (Create), `update()` (Edit).
+5.  **Validation (Quality Gate)**:
+    - Analyzed flow MUST have **> 2 Nodes** (e.g., Start -> Process -> End).
+    - If nodes <= 2, consider extraction FAILED.
+6.  **Output**: Generate `public/docs/data/diagrams/flow_{component_name}.xml`.
+
+### 4.1.3 Consistency Assurance (Module-Diagram-UseCase)
+> **RULE**: Every identified module MUST have at least one Diagram and one Use Case per Role.
+
+1.  **Backfill Logic**:
+    - If `Module X` exists but `flow_X.xml` is missing -> Generate Basic CRUD Flow.
+    - If `Module X` exists but `usecases.json` has no entry -> Generate "Gestionar X" for inferred role.
+2.  **Role-Based Use Case Extraction**:
+    - Parse `routes/web.php`:
+        - Group routes by `middleware` (e.g., `auth:admin` -> Role: Admin).
+        - Map URL `/admin/users` -> Controller `UserController` -> Module `Users`.
+        - Create Use Case: "Administrar Users" (Actor: Admin).
+    - Parse `app/Policies/*.php`:
+        - `viewAny` -> Use Case "Ver Listado".
+        - `create` -> Use Case "Crear Registro".
+
+
 ### 4.3 Integration with 'Use Skills'
 - When triggered as part of the full chain, this skill runs LAST to capture the final state of the project.
+
+### 4.4 Verification & Filling (FAIL-SAFE)
+After extracting data, the system MUST verify that ALL core files exist. If any file is missing or empty, generate a valid placeholder:
+
+1.  **Iterate** list of required files: `project.json`, `modules.json`, `diagrams.json`, `skills.json`.
+2.  **Check Existence**: If missing -> Generate Placeholder (See Section 6.2).
+3.  **Check Diagrams**: For every entry in `diagrams.json`, ensure the referenced XML/SVG exists. If not -> Generate Placeholder Diagram.
 
 ## 5. TEMPLATE RULES (CRITICAL)
 
@@ -259,6 +302,57 @@ All flowchart and lifecycle diagrams MUST include role definitions and role assi
 
 Refer to standard `docs:generate` logic implemented in Laravel.
 
+### 6.2 Fail-Safe Generation Strategy (MANDATORY)
+> **RULE**: All core data files must exist. If extraction fails, create a valid placeholder to prevent 404 errors.
+
+**Placeholder Content Definitions**:
+
+1.  **project.json**:
+    ```json
+    {"name": "Project Documentation", "version": "0.0.0", "description": "No metadata detected.", "lastUpdated": "NOW"}
+    ```
+
+2.  **modules.json**:
+    ```json
+    {"modules": [{"id": "none", "name": "No Modules Detected", "description": "Source code scan returned empty.", "status": "pending", "features": [], "progress": 0}]}
+    ```
+
+3.  **diagrams.json**:
+    ```json
+    {"er": [], "flow": [], "usecase": []}
+    ```
+
+4.  **changelog.json**:
+    ```json
+    {"entries": []}
+    ```
+
+5.  **pending.json**:
+    ```json
+    {"items": []}
+    ```
+
+6.  **kanban.json**:
+    ```json
+    {"columns": []}
+    ```
+
+7.  **Flow Diagram Placeholder (XML)**:
+    ```xml
+    <diagram type="flowchart" id="placeholder" title="No Data"><metadata><module>System</module></metadata><roles><role id="system" name="System" color="#gray"/></roles><nodes><node id="start" type="start" label="No Logic Found" role="system"/></nodes><connections/></diagram>
+    ```
+
+**Logic**:
+- **NEVER** leave `public/docs/data/` empty.
+- **ALWAYS** check for file existence before finishing execution.
+- **ALWAYS** set `lastUpdated` timestamp even in placeholders.
+- **CONTENT INTEGRITY (CRITICAL)**:
+    - Do **NOT** overwrite an existing diagram with a placeholder if the existing file has > 200 bytes or valid XML structure.
+    - Only use Placeholder if:
+        1. File does not exist AND extraction failed.
+        2. Extracted file is empty/corrupt (0 bytes).
+        3. Extracted logic has < 3 nodes (Quality Gate failed).
+
 ### 7.1 Skills & Automation Section (NEW)
 The documentation viewer MUST include a dedicated **"Skills & Automation"** section:
 
@@ -382,3 +476,208 @@ When adding new data sections, ensure `style.css` includes:
 - Priority badges (`.priority-badge.high`, `.priority-badge.normal`, `.priority-badge.low`)
 - Responsive breakpoints for mobile
 - Consistent spacing with existing sections
+
+## 9. CSS ASSURANCE (CRITICAL)
+
+> [!CAUTION]
+> **EVERY execution of this skill MUST verify CSS integrity.** A broken CSS reference = unusable documentation viewer.
+
+### 9.1 CSS Structure Requirements
+
+The documentation viewer uses this **MANDATORY** file structure:
+
+```
+public/docs/
+├── index.html          # References assets/style.css
+├── assets/
+│   ├── style.css       # ⚠️ CRITICAL - Main styles
+│   ├── app.js          # Application logic
+│   └── diagram-renderer.js
+└── data/
+    └── *.json
+```
+
+### 9.2 CSS Reference Validation (AUTO-CHECK)
+
+On **EVERY** skill execution, verify:
+
+1. **File Existence Check**:
+   ```
+   ✓ public/docs/assets/style.css exists
+   ✓ public/docs/index.html exists
+   ✓ public/docs/assets/app.js exists
+   ```
+
+2. **Reference Integrity Check**:
+   The `index.html` MUST contain this exact reference:
+   ```html
+   <link rel="stylesheet" href="assets/style.css">
+   ```
+   
+   **NOT** these incorrect patterns:
+   ```html
+   <!-- ❌ WRONG -->
+   <link rel="stylesheet" href="style.css">
+   <link rel="stylesheet" href="/docs/assets/style.css">
+   <link rel="stylesheet" href="../assets/style.css">
+   ```
+
+3. **JS Reference Check**:
+   ```html
+   <script src="assets/diagram-renderer.js"></script>
+   <script src="assets/app.js"></script>
+   ```
+
+### 9.3 Auto-Fix Rules
+
+If CSS issues are detected during skill execution:
+
+| Issue | Auto-Fix Action |
+|-------|-----------------|
+| `assets/style.css` missing | Copy from `.agent/templates/docs/assets/style.css` |
+| `style.css` in wrong location (root) | Move to `assets/` subdirectory |
+| Wrong `href` in `index.html` | Update to `assets/style.css` |
+| Duplicate CSS files | Keep only `assets/style.css`, delete others |
+
+### 9.4 Template Sync Protocol
+
+When syncing from templates to public:
+
+```powershell
+# CORRECT: Preserve directory structure
+Copy-Item -Path ".agent/templates/docs/*" -Destination "public/docs/" -Recurse -Force
+
+# Verify structure after copy
+Test-Path "public/docs/assets/style.css"  # MUST be True
+Test-Path "public/docs/index.html"        # MUST be True
+```
+
+### 9.5 CSS Validation Checklist
+
+Before completing Project Docs skill execution:
+
+- [ ] `public/docs/assets/style.css` exists and is readable
+- [ ] `public/docs/index.html` contains `href="assets/style.css"`
+- [ ] No duplicate `style.css` files in `public/docs/` root
+- [ ] All CSS classes referenced in JS exist in CSS file
+- [ ] Console shows no 404 errors for CSS/JS resources
+
+### 9.6 CSS Content Integrity
+
+The `style.css` file MUST include these critical selectors:
+
+```css
+/* Core Layout */
+.app-container { ... }
+.sidebar { ... }
+.main-content { ... }
+.section { ... }
+
+/* Navigation */
+.nav-menu { ... }
+.nav-item { ... }
+.nav-item.active { ... }
+
+/* Cards & Grids */
+.stat-card { ... }
+.modules-grid { ... }
+.skill-card { ... }
+
+/* Dynamic Sections */
+.skills-grid { ... }
+.priority-badge { ... }
+.priority-badge.high { ... }
+.priority-badge.normal { ... }
+.priority-badge.low { ... }
+```
+
+### 9.7 Fallback Mechanism
+
+If CSS cannot be loaded (404), the viewer should:
+1. Display a warning banner at the top
+2. Use browser default styles gracefully
+3. Log the error to console with path attempted
+
+```javascript
+// app.js fallback check
+document.addEventListener('DOMContentLoaded', () => {
+    const cssLink = document.querySelector('link[href*="style.css"]');
+    if (!cssLink || !document.styleSheets.length) {
+        console.error('⚠️ CSS not loaded. Check path: assets/style.css');
+    }
+});
+```
+
+> [!IMPORTANT]
+> **NEVER** generate or update documentation without verifying CSS paths are correct. A visually broken viewer is worse than no viewer.
+
+## 10. DATA CACHE BUSTING (CRITICAL)
+
+> [!CAUTION]
+> **ALL data files MUST be loaded with a cache-busting parameter** to ensure the browser always fetches fresh content, especially after documentation updates.
+
+### 10.1 How It Works
+
+The `app.js` generates a unique timestamp when the DocsApp is initialized:
+
+```javascript
+// At app initialization
+this.cacheVersion = new Date().toISOString().replace(/[:.]/g, '-');
+// Example: "2026-01-28T11-45-26-123Z"
+```
+
+### 10.2 URL Generation
+
+All data file requests use the `dataUrl()` method:
+
+```javascript
+dataUrl(path) {
+    return `${path}?v=${this.cacheVersion}`;
+}
+
+// Usage:
+fetch(this.dataUrl('data/project.json'))
+// Results in: data/project.json?v=2026-01-28T11-45-26-123Z
+```
+
+### 10.3 Files That MUST Use Cache Busting
+
+| File Type | Location | Method |
+|-----------|----------|--------|
+| **JSON Data** | `data/*.json` | `this.dataUrl()` in `loadData()` |
+| **ER Diagrams** | `data/diagrams/*.svg` | `this.dataUrl()` in `renderERDiagram()` |
+| **Flow Diagrams** | `data/diagrams/*.xml` | `this.dataUrl()` in `renderDiagrams()` |
+| **Use Case Diagrams** | `data/diagrams/*.xml` | `this.dataUrl()` in `renderDiagrams()` |
+
+### 10.4 Console Logging
+
+On load, the console should show:
+```
+📄 DocsApp initialized with cache version: 2026-01-28T11-45-26-123Z
+✅ Data loaded with cache version: 2026-01-28T11-45-26-123Z
+```
+
+### 10.5 Validation Checklist
+
+Before completing Project Docs execution:
+
+- [ ] `app.js` constructor generates `this.cacheVersion`
+- [ ] `loadData()` uses `this.dataUrl()` for all 8 JSON files
+- [ ] `renderERDiagram()` uses `this.dataUrl()` for SVG path
+- [ ] `renderDiagrams()` uses `this.dataUrl()` for XML paths
+- [ ] Console shows cache version on page load
+
+### 10.6 Why This Matters
+
+Without cache busting:
+- ❌ Browser may serve stale JSON from cache
+- ❌ Documentation updates won't reflect immediately
+- ❌ Users see outdated project information
+
+With cache busting:
+- ✅ Every page load fetches fresh data
+- ✅ Documentation updates are instant
+- ✅ No manual cache clearing needed
+
+> [!TIP]
+> The timestamp format uses ISO-8601 with colons and dots replaced by hyphens to ensure URL safety.

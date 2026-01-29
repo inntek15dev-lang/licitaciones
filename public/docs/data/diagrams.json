@@ -1,0 +1,43 @@
+{
+    "er": [
+        {
+            "id": "er-full",
+            "title": "ER Completo",
+            "path": "data/diagrams/er_diagram.svg",
+            "description": "Base de Datos"
+        }
+    ],
+    "flow": [
+        {
+            "id": "flow-auth",
+            "title": "Autenticación",
+            "path": "data/diagrams/flow_auth.xml",
+            "description": "Flujo de Login"
+        },
+        {
+            "id": "flow-licitaciones",
+            "title": "Licitaciones",
+            "path": "data/diagrams/flow_licitaciones.xml",
+            "description": "Flujo Principal"
+        },
+        {
+            "id": "flow-maestros",
+            "title": "Maestros",
+            "path": "data/diagrams/flow_maestros.xml",
+            "description": "Flujo Admin"
+        },
+        {
+            "id": "flow-ofertas",
+            "title": "Ofertas",
+            "path": "data/diagrams/flow_ofertas.xml",
+            "description": "Flujo Contratista"
+        },
+        {
+            "id": "flow-precalificacion",
+            "title": "Precalificación",
+            "path": "data/diagrams/flow_precalificacion.xml",
+            "description": "Flujo Validación"
+        }
+    ],
+    "usecase": []
+}

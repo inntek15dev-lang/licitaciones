@@ -1,8 +1,8 @@
 {
     "roles_config": {
-        "admin": {
-            "nombre": "Administrador de Sistema",
-            "descripcion": "Rol principal de administrador de sistema. Acceso total a todos los módulos y acciones.",
+        "admin_plataforma": {
+            "nombre": "Administrador RyCE",
+            "descripcion": "Administrador de RyCE con control total y capacidad de precalificación.",
             "permisos": [
                 {
                     "modulo": "*",
@@ -13,30 +13,81 @@
                     ]
                 }
             ],
-            "observaciones": "Este es el rol principal de administrador de sistema por lo que puede ver todos los modulos del sistema, editar, crear, eliminar todos los registros y ejecutar cualquier accion"
+            "observaciones": "Control total del sistema, supervisión de procesos de licitación y precalificación de ofertas de contratistas."
         },
-        "admin_contrato": {
-            "nombre": "Administrador de Contrato",
-            "descripcion": "Gestión específica de registros, contratistas y aperturas.",
+        "usuario_principal": {
+            "nombre": "Usuario Empresa Principal",
+            "descripcion": "Gestión de licitaciones, documentos base y adjudicaciones.",
             "permisos": [
                 {
-                    "modulo": "Admin_Registros",
+                    "modulo": "Licitaciones_Gestion",
+                    "acciones": [
+                        "read",
+                        "write",
+                        "excec"
+                    ]
+                },
+                {
+                    "modulo": "Licitaciones_Documentos",
+                    "acciones": [
+                        "read",
+                        "write"
+                    ]
+                },
+                {
+                    "modulo": "Licitaciones_Precalificacion",
                     "acciones": [
                         "read",
                         "excec"
                     ]
                 },
                 {
-                    "modulo": "Admin_MisContratistas",
+                    "modulo": "Licitaciones_Ofertas",
+                    "acciones": [
+                        "read",
+                        "excec"
+                    ]
+                },
+                {
+                    "modulo": "Licitaciones_Consultas",
+                    "acciones": [
+                        "read",
+                        "write"
+                    ]
+                }
+            ],
+            "observaciones": "Corresponde a la empresa cliente; crea y gestiona sus propias licitaciones y adjudica ofertas."
+        },
+        "usuario_contratista": {
+            "nombre": "Usuario Contratista Administrador",
+            "descripcion": "Perfil de gestión para empresas proveedoras, postulación y precalificación.",
+            "permisos": [
+                {
+                    "modulo": "Contratista_Busqueda",
                     "acciones": [
                         "read"
                     ]
                 },
                 {
-                    "modulo": "Admin_SolicitudesReapertura",
+                    "modulo": "Contratista_Precalificacion",
                     "acciones": [
                         "read",
+                        "write",
                         "excec"
+                    ]
+                },
+                {
+                    "modulo": "Contratista_Ofertas",
+                    "acciones": [
+                        "read",
+                        "write"
+                    ]
+                },
+                {
+                    "modulo": "Contratista_Consultas",
+                    "acciones": [
+                        "read",
+                        "write"
                     ]
                 },
                 {
@@ -46,99 +97,42 @@
                         "write",
                         "excec"
                     ]
-                },
-                {
-                    "modulo": "Admin_Compromisos",
-                    "acciones": [
-                        "read"
-                    ]
                 }
             ],
-            "observaciones": ""
+            "observaciones": "Permite buscar licitaciones, gestionar solicitudes de precalificación y presentar ofertas."
         },
-        "contratista_admin": {
-            "nombre": "Contratista Administrador",
-            "descripcion": "Perfil de gestión completa para contratistas.",
+        "usuario_contratista_operativo": {
+            "nombre": "Usuario Contratista Operativo",
+            "descripcion": "Perfil operativo para contratistas con acceso limitado por asignación.",
             "permisos": [
                 {
-                    "modulo": "Contratista_Dashboard",
-                    "acciones": [
-                        "read",
-                        "write",
-                        "excec"
-                    ]
-                },
-                {
-                    "modulo": "Contratista_Historial",
-                    "acciones": [
-                        "read",
-                        "write",
-                        "excec"
-                    ]
-                },
-                {
-                    "modulo": "Contratista_SolicitudesReapertura",
+                    "modulo": "Contratista_Busqueda",
                     "acciones": [
                         "read"
                     ]
                 },
                 {
-                    "modulo": "Contratista_Evidencias",
+                    "modulo": "Contratista_Precalificacion",
                     "acciones": [
                         "read"
                     ]
                 },
                 {
-                    "modulo": "Contratista_Usuarios",
+                    "modulo": "Contratista_Ofertas",
                     "acciones": [
                         "read",
-                        "write",
-                        "excec"
+                        "write"
+                    ]
+                },
+                {
+                    "modulo": "Contratista_Consultas",
+                    "acciones": [
+                        "read",
+                        "write"
                     ]
                 }
             ],
-            "observaciones": "Este perfil es el que actualmente corresponde al rol contratista"
-        },
-        "contratista_user": {
-            "nombre": "Usuario Contratista",
-            "descripcion": "Perfil operativo de contratista con acceso limitado y filtrado.",
-            "permisos": [
-                {
-                    "modulo": "Contratista_Dashboard",
-                    "acciones": [
-                        "read",
-                        "write",
-                        "excec"
-                    ]
-                },
-                {
-                    "modulo": "Contratista_Historial",
-                    "acciones": [
-                        "read",
-                        "write",
-                        "excec"
-                    ]
-                },
-                {
-                    "modulo": "Contratista_SolicitudesReapertura",
-                    "acciones": [
-                        "read"
-                    ]
-                },
-                {
-                    "modulo": "Contratista_Evidencias",
-                    "acciones": [
-                        "read"
-                    ]
-                },
-                {
-                    "modulo": "Admin_Compromisos",
-                    "acciones": [
-                        "read"
-                    ]
-                }
-            ],
-            "observaciones": "Este perfil es similar a contratista_admin pero todo registro esta filtrado por su asignacion a este user, y no puede ver el modulo de usuarios"
+            "observaciones": "Similar al administrador contratista pero filtrado por su asignación y sin acceso al módulo de usuarios de su empresa."
         }
     }
 }
