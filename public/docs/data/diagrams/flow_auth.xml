@@ -1,0 +1,18 @@
+<diagram type="flowchart" id="flow-auth" title="Autenticación">
+  <metadata>
+    <module>Auth</module>
+  </metadata>
+  <roles>
+    <role id="guest" name="Visitante" color="#9ca3af"/>
+    <role id="sistema" name="Sistema" color="#3b82f6"/>
+  </roles>
+  <nodes>
+    <node id="start" type="start" x="100" y="50" label="Ingreso Login" role="guest"/>
+    <node id="auth" type="decision" x="100" y="150" label="Autenticar" role="sistema"/>
+    <node id="redirect" type="process" x="100" y="250" label="Redigir Dashboard" role="sistema"/>
+  </nodes>
+  <connections>
+    <connect from="start" to="auth"/>
+    <connect from="auth" to="redirect" label="OK"/>
+  </connections>
+</diagram>

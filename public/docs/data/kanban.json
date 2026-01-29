@@ -1,0 +1,19 @@
+{
+    "columns": [
+        {
+            "id": "todo",
+            "title": "Por Hacer",
+            "items": []
+        },
+        {
+            "id": "wip",
+            "title": "En Progreso",
+            "items": []
+        },
+        {
+            "id": "done",
+            "title": "Completado",
+            "items": []
+        }
+    ]
+}

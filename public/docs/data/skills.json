@@ -1,0 +1,18 @@
+{
+    "generated_at": "2026-01-28T12:47:00",
+    "total_skills": 7,
+    "skills": [
+        {
+            "id": "project-docs",
+            "name": "Project Documentation",
+            "priority": "NORMAL",
+            "description": "Generación de documentación con Quality Gates."
+        }
+    ],
+    "execution_chain": {
+        "order": [
+            "project-docs"
+        ],
+        "notes": "Integrity Mode Execution"
+    }
+}

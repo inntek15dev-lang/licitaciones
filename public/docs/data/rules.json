@@ -1,0 +1,18 @@
+{
+    "rules": [
+        {
+            "id": "R01",
+            "title": "Integridad de Datos",
+            "description": "Todo módulo debe tener diagrama asociado.",
+            "type": "tecnico",
+            "module_id": "docs"
+        },
+        {
+            "id": "R02",
+            "title": "Content Integrity",
+            "description": "Diagramas válidos (>2 nodos) no se sobrescriben.",
+            "type": "tecnico",
+            "module_id": "docs"
+        }
+    ]
+}
