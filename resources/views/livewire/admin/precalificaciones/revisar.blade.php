@@ -54,6 +54,94 @@
                 </div>
             </div>
 
+            <!-- Ficha Técnica de Empresa (Corporate Standard) -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">📋 Ficha Técnica (Estándar Corporativo)</h2>
+                
+                <!-- 1. Organización -->
+                <div class="mb-4">
+                    <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Organización</h3>
+                    <div class="grid grid-cols-2 gap-4 bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                        <div>
+                            <span class="block text-xs text-gray-400">Trabajadores</span>
+                            <span class="font-medium text-gray-900 dark:text-gray-200">{{ $precalificacion->nro_trabajadores ?? '-' }}</span>
+                        </div>
+                        <div>
+                            <span class="block text-xs text-gray-400">Años Experiencia</span>
+                            <span class="font-medium text-gray-900 dark:text-gray-200">{{ $precalificacion->anios_experiencia ?? '-' }} años</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Financiero -->
+                <div class="mb-4">
+                    <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Información Financiera ({{ $precalificacion->moneda_financiera ?? 'CLP' }})</h3>
+                    <div class="grid grid-cols-3 gap-4 bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                        <div>
+                            <span class="block text-xs text-gray-400">Capital Social</span>
+                            <span class="font-medium text-gray-900 dark:text-gray-200">{{ number_format($precalificacion->capital_social ?? 0, 2) }}</span>
+                        </div>
+                        <div>
+                            <span class="block text-xs text-gray-400">Patrimonio</span>
+                            <span class="font-medium text-gray-900 dark:text-gray-200">{{ number_format($precalificacion->patrimonio_neto ?? 0, 2) }}</span>
+                        </div>
+                        <div>
+                            <span class="block text-xs text-gray-400">Ventas (Año)</span>
+                            <span class="font-medium text-gray-900 dark:text-gray-200">{{ number_format($precalificacion->ventas_ultimo_anio ?? 0, 2) }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. HSE & Calidad -->
+                <div class="mb-4">
+                    <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">HSE & Calidad</h3>
+                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg space-y-3">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <span class="block text-xs text-gray-400">Tasa Accidentabilidad</span>
+                                <span class="font-medium text-gray-900 dark:text-gray-200 {{ ($precalificacion->tasa_accidentabilidad > 5) ? 'text-red-600' : '' }}">
+                                    {{ $precalificacion->tasa_accidentabilidad ?? '-' }}%
+                                </span>
+                            </div>
+                            <div>
+                                <span class="block text-xs text-gray-400">Tasa Siniestralidad</span>
+                                <span class="font-medium text-gray-900 dark:text-gray-200">
+                                    {{ $precalificacion->tasa_siniestralidad ?? '-' }}%
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                             <span class="px-2 py-1 rounded text-xs border {{ $precalificacion->tiene_programa_prevencion ? 'bg-green-100 border-green-200 text-green-700' : 'bg-gray-100 border-gray-200 text-gray-500' }}">
+                                {{ $precalificacion->tiene_programa_prevencion ? '✓ Prog. Prevención' : '✗ Prog. Prevención' }}
+                            </span>
+                             <span class="px-2 py-1 rounded text-xs border {{ $precalificacion->tiene_iso_9001 ? 'bg-blue-100 border-blue-200 text-blue-700' : 'bg-gray-100 border-gray-200 text-gray-500' }}">
+                                {{ $precalificacion->tiene_iso_9001 ? '✓ ISO 9001' : '✗ ISO 9001' }}
+                            </span>
+                             <span class="px-2 py-1 rounded text-xs border {{ $precalificacion->tiene_iso_14001 ? 'bg-blue-100 border-blue-200 text-blue-700' : 'bg-gray-100 border-gray-200 text-gray-500' }}">
+                                {{ $precalificacion->tiene_iso_14001 ? '✓ ISO 14001' : '✗ ISO 14001' }}
+                            </span>
+                             <span class="px-2 py-1 rounded text-xs border {{ $precalificacion->tiene_iso_45001 ? 'bg-blue-100 border-blue-200 text-blue-700' : 'bg-gray-100 border-gray-200 text-gray-500' }}">
+                                {{ $precalificacion->tiene_iso_45001 ? '✓ ISO 45001' : '✗ ISO 45001' }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Legal -->
+                <div>
+                     <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Representante Legal</h3>
+                     <div class="flex justify-between bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                        <div>
+                            <span class="block text-xs text-gray-400">Nombre</span>
+                            <span class="font-medium text-gray-900 dark:text-gray-200">{{ $precalificacion->nombre_representante_legal ?? '-' }}</span>
+                        </div>
+                        <div>
+                            <span class="block text-xs text-gray-400">RUT</span>
+                            <span class="font-medium text-gray-900 dark:text-gray-200">{{ $precalificacion->rut_representante_legal ?? '-' }}</span>
+                        </div>
+                     </div>
+                </div>
+
             <!-- Comentarios del Contratista -->
             @if($precalificacion->comentarios_contratista)
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">

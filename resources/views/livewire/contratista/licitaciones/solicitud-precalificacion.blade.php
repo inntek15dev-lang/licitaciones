@@ -127,8 +127,117 @@
                 
                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">
                     Para postular a esta licitación debes pasar primero por un proceso de precalificación. 
-                    Adjunta los documentos requeridos según los requisitos especificados.
+                    Completa la ficha técnica de tu empresa y adjunta los documentos requeridos.
                 </p>
+
+                <!-- 1. Antecedentes de la Organización -->
+                <div class="mb-8 p-5 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600">
+                    <h3 class="text-md font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center gap-2">
+                        <span>🏢</span> Antecedentes de la Organización
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Nro. Trabajadores</label>
+                            <input wire:model="nro_trabajadores" type="number" class="w-full text-sm border-gray-300 rounded-lg focus:ring-violet-500 focus:border-violet-500">
+                            @error('nro_trabajadores') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Años Experiencia</label>
+                            <input wire:model="anios_experiencia" type="number" class="w-full text-sm border-gray-300 rounded-lg focus:ring-violet-500 focus:border-violet-500">
+                            @error('anios_experiencia') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Información Financiera -->
+                <div class="mb-8 p-5 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600">
+                    <h3 class="text-md font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center gap-2">
+                        <span>💰</span> Información Financiera (Último Balance)
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div class="md:col-span-3">
+                            <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Moneda</label>
+                            <select wire:model="moneda_financiera" class="w-full text-sm border-gray-300 rounded-lg focus:ring-violet-500 focus:border-violet-500">
+                                <option value="CLP">Pesos Chilenos (CLP)</option>
+                                <option value="USD">Dólares (USD)</option>
+                                <option value="UF">Unidad de Fomento (UF)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Capital Social</label>
+                            <input wire:model="capital_social" type="number" step="0.01" class="w-full text-sm border-gray-300 rounded-lg focus:ring-violet-500 focus:border-violet-500">
+                            @error('capital_social') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Patrimonio Neto</label>
+                            <input wire:model="patrimonio_neto" type="number" step="0.01" class="w-full text-sm border-gray-300 rounded-lg focus:ring-violet-500 focus:border-violet-500">
+                            @error('patrimonio_neto') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Ventas Último Año</label>
+                            <input wire:model="ventas_ultimo_anio" type="number" step="0.01" class="w-full text-sm border-gray-300 rounded-lg focus:ring-violet-500 focus:border-violet-500">
+                            @error('ventas_ultimo_anio') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Seguridad y Salud (HSE) -->
+                <div class="mb-8 p-5 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600">
+                    <h3 class="text-md font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center gap-2">
+                        <span>⛑️</span> Seguridad (HSE) y Calidad
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Tasa Accidentabilidad (%)</label>
+                            <input wire:model="tasa_accidentabilidad" type="number" step="0.01" class="w-full text-sm border-gray-300 rounded-lg focus:ring-violet-500 focus:border-violet-500">
+                            @error('tasa_accidentabilidad') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Tasa Siniestralidad (%)</label>
+                            <input wire:model="tasa_siniestralidad" type="number" step="0.01" class="w-full text-sm border-gray-300 rounded-lg focus:ring-violet-500 focus:border-violet-500">
+                            @error('tasa_siniestralidad') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3 mt-4">
+                        <label class="flex items-center gap-2">
+                            <input wire:model="tiene_programa_prevencion" type="checkbox" class="rounded border-gray-300 text-violet-600 shadow-sm focus:border-violet-300 focus:ring focus:ring-violet-200 focus:ring-opacity-50">
+                            <span class="text-sm text-gray-700 dark:text-gray-300">Cuenta con Programa de Prevención de Riesgos</span>
+                        </label>
+                        <div class="border-t border-gray-200 dark:border-gray-600 my-2"></div>
+                        <label class="flex items-center gap-2">
+                            <input wire:model="tiene_iso_9001" type="checkbox" class="rounded border-gray-300 text-violet-600 shadow-sm focus:border-violet-300 focus:ring focus:ring-violet-200 focus:ring-opacity-50">
+                            <span class="text-sm text-gray-700 dark:text-gray-300">Certificación ISO 9001 (Calidad)</span>
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input wire:model="tiene_iso_14001" type="checkbox" class="rounded border-gray-300 text-violet-600 shadow-sm focus:border-violet-300 focus:ring focus:ring-violet-200 focus:ring-opacity-50">
+                            <span class="text-sm text-gray-700 dark:text-gray-300">Certificación ISO 14001 (Medio Ambiente)</span>
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input wire:model="tiene_iso_45001" type="checkbox" class="rounded border-gray-300 text-violet-600 shadow-sm focus:border-violet-300 focus:ring focus:ring-violet-200 focus:ring-opacity-50">
+                            <span class="text-sm text-gray-700 dark:text-gray-300">Certificación ISO 45001 (Seguridad y Salud)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 4. Representante Legal -->
+                <div class="mb-8 p-5 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600">
+                    <h3 class="text-md font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center gap-2">
+                        <span>⚖️</span> Representante Legal
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Nombre Completo</label>
+                            <input wire:model="nombre_representante_legal" type="text" class="w-full text-sm border-gray-300 rounded-lg focus:ring-violet-500 focus:border-violet-500">
+                            @error('nombre_representante_legal') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">RUT</label>
+                            <input wire:model="rut_representante_legal" type="text" class="w-full text-sm border-gray-300 rounded-lg focus:ring-violet-500 focus:border-violet-500">
+                            @error('rut_representante_legal') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Comentarios -->
                 <div class="mb-6">

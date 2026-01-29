@@ -27,22 +27,33 @@ Cuando el usuario dice **"SKILL IT"** seguido de una instrucción, se deben ejec
 - Verificar conectividad DB si aplica
 - Verificar Vite/servidor dev si aplica
 
-### 4. 🗄️ SQL to Laravel (Base de Datos)
+### 4. 📐 Data Modeler (Modelado BD)
+- Leer: `.agent/skills/data-modeler/SKILL.md`
+- Si NO hay SQL en `.agent/BD/`, minar documentación `.agent/docs/`
+- Generar `schema_base.sql` y reporte de descubrimiento de entidades
+- Preparar terreno para generación de Laravel
+
+### 5. 🗄️ SQL to Laravel (Base de Datos)
 - Leer: `.agent/skills/sql-to-laravel/SKILL.md`
 - Si hay scripts SQL en `.agent/BD/`, procesarlos
 - Generar migraciones, modelos, factories según corresponda
 
-### 5. 🔐 Privilegios Engine (Permisos)
+### 6. 🔄 Add Generic Sync (Sincronización)
+- Leer: `.agent/skills/add-generic-sync/SKILL.md`
+- Verificar / Generar módulo de sincronización genérica si es necesario
+- Asegurar existencia de `ApiSyncConfig` y controladores asociados
+
+### 7. 🔐 Privilegios Engine (Permisos)
 - Leer: `.agent/skills/privilegios-engine/SKILL.md`
 - Sincronizar roles desde `.agent/roles/roles.json`
 - Verificar directivas @canRead, @canWrite, @canExcec
 
-### 6. 👁️ View Assurance (Vistas)
+### 8. 👁️ View Assurance (Vistas)
 - Leer: `.agent/skills/view-assurance/SKILL.md`
 - Validar rutas dinámicas en Blade
 - Verificar uso correcto de `route()` y `url()`
 
-### 7. 📚 Project Docs (Documentación) - SIEMPRE AL FINAL
+### 9. 📚 Project Docs (Documentación) - SIEMPRE AL FINAL
 - Leer: `.agent/skills/project-docs/SKILL.md`
 - Generar/actualizar `skills.json` con inventario de skills
 - Actualizar toda la documentación en `public/docs/data/`

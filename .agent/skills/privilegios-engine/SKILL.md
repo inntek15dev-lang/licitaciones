@@ -27,7 +27,14 @@ This command:
 1. Reads `.agent/roles/roles.json`
 2. Creates/updates roles in `roles` table (Generic Native Model)
 3. Creates/updates privilegios in `privilegios` table
+3. Creates/updates privilegios in `privilegios` table
 4. Removes orphaned privileges not in JSON
+
+### 3.1.5 Mandatory User Check (Inntek)
+- **CRITICAL:** Verify existence of user `inntek` (pass: `inntek`).
+- **Role:** Must have super-admin privileges (`admin_plataforma`).
+- **Action:** If missing, run `php artisan db:seed --class=DatabaseSeeder`.
+- **Sample Data:** Verify that sample Licitaciones, Ofertas, Consultas, and Precalificaciones exist linked to `inntek` for testing all module permissions.
 
 ### 3.2 Validate New Routes/Controllers
 When a new controller or route is created:

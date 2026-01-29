@@ -13,7 +13,10 @@ description: Transform SQL scripts into structured Laravel projects, populate da
     - Missing Primary Keys (Stop and warn).
     - Obsolete types (e.g., INT(11) -> integer()).
     - Hidden relationships (e.g., columns ending in _id without FK constraints).
+    - Hidden relationships (e.g., columns ending in _id without FK constraints).
 - **Safety:** NO video/live content references. Use only official documentation.
+- **CRITICAL**: Ensure `inntek` user is preserved/created in Seeders.
+- **Query**: Check if `DatabaseSeeder` contains `User::firstOrCreate(['name' => 'inntek' ...`.
 
 ## 2. DATABASE HIERARCHY & ORDERING (CRITICAL)
 - **Dependency Mapping:** Analyze table relationships BEFORE generation.
@@ -33,6 +36,7 @@ description: Transform SQL scripts into structured Laravel projects, populate da
     - Use `INSERT IGNORE` or `updateOrInsert` to prevent duplication.
     - Convert `INSERT INTO` statements into `DB::table()->insert()` arrays if using PHP seeders.
     - Use chunking or LazyCollections for large datasets.
+    - **CRITICAL Sample Data Rule**: Generate at least 3 sample records per entity linked to `inntek` user for full system exploration.
 
 ## 4. OUTPUT FORMAT
 - Always provide a "Validation Report" before the code.

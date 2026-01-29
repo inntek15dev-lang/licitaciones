@@ -35,14 +35,26 @@ A diferencia de `SKILL IT` (que requiere una instrucción específica), `SKILL A
 - Validar `.env` y configuraciones críticas
 - Detectar drift o inconsistencias de ambiente
 
-### 4. 🗄️ SQL to Laravel (Sincronización BD)
+### 4. 📐 Data Modeler (Modelado y Descubrimiento)
+- Leer: `.agent/skills/data-modeler/SKILL.md`
+- Ejecutar "Entity Discovery" multicanal (Modelos + Migraciones + SQL)
+- Si faltan tablas en SQL, completar `schema_base.sql`
+- Garantizar que la base de datos refleje la realidad del código
+
+### 5. 🗄️ SQL to Laravel (Sincronización BD)
 - Leer: `.agent/skills/sql-to-laravel/SKILL.md`
 - Procesar TODOS los scripts SQL pendientes en `.agent/BD/`
 - Verificar coherencia entre migraciones y modelos
 - Validar factories y seeders existentes
 - Generar migraciones faltantes si se detectan
 
-### 5. 🔐 Privilegios Engine (Auditoría de Permisos)
+### 6. 🔄 Add Generic Sync (Módulo Sincronización)
+- Leer: `.agent/skills/add-generic-sync/SKILL.md`
+- Validar existencia e integridad del módulo de sincronización
+- Generar componentes `ApiSync` faltantes si no existen
+- Asegurar configuración base de sincronización
+
+### 7. 🔐 Privilegios Engine (Auditoría de Permisos)
 - Leer: `.agent/skills/privilegios-engine/SKILL.md`
 - Sincronizar roles desde `.agent/roles/roles.json`
 - Auditar uso de directivas @canRead, @canWrite, @canExcec en TODAS las vistas
@@ -50,14 +62,14 @@ A diferencia de `SKILL IT` (que requiere una instrucción específica), `SKILL A
 - Verificar que botones de eliminación tengan @canExcec
 - Reportar vistas sin protección adecuada
 
-### 6. 👁️ View Assurance (Validación de Vistas)
+### 8. 👁️ View Assurance (Validación de Vistas)
 - Leer: `.agent/skills/view-assurance/SKILL.md`
 - Escanear TODAS las vistas Blade del proyecto
 - Validar rutas dinámicas (uso correcto de `route()` y `url()`)
 - Verificar patrones de framework correctos
 - Detectar URLs hardcodeadas o incorrectas
 
-### 7. 📚 Project Docs (Documentación Completa) - SIEMPRE AL FINAL
+### 9. 📚 Project Docs (Documentación Completa) - SIEMPRE AL FINAL
 - Leer: `.agent/skills/project-docs/SKILL.md`
 - Generar/actualizar `skills.json` con inventario completo de skills
 - Actualizar TODA la documentación en `public/docs/data/`

@@ -91,11 +91,24 @@ find . -type f -exec chmod 644 {} \;
 chmod -R 775 storage bootstrap/cache
 ```
 
-## 6. EXECUTION GUIDELINES
+## 7. W-ROOT: WEB ROOT ALIGNMENT (Laragon/Apache/Nginx)
+- **Symptom:** Browser shows "Index of /" or directory listing instead of the app.
+- **Cause:** Virtual Host Document Root points to project root `C:/laragon/www/project` instead of `.../project/public`.
+- **Validation:** Access the site URL. If it lists files, the Root is incorrect.
+- **Fix (Laragon - Recommended):**
+    1. Open Laragon Menu -> Apache/Nginx -> sites-enabled -> `licitaciones.test.conf`.
+    2. Change `root "C:/laragon/www/licitaciones";` to `root "C:/laragon/www/licitaciones/public";`.
+    3. Reload Laragon.
+- **Fix (Workaround - .htaccess):**
+    - Create `.htaccess` in project root to redirect all traffic to `public/`.
+    - *Note:* Only works for Apache/OpenLiteSpeed.
+
+## 8. EXECUTION GUIDELINES
 - Always verify connectivity BEFORE attempting database migrations or builds.
 - If a symlink error occurs, check the OS and use the designated `symlink_method`.
 - In case of HMR failure, check if the application is running inside Docker and ensure port 5173 is exposed and correctly mapped.
 - When working from symlinked directories, verify Vite `preserveSymlinks` is enabled.
 - Before running npm commands in PowerShell, verify execution policy or use CMD wrapper.
 - If permission denied errors occur, run the appropriate auto-fix command for the OS.
+- **Web Root Check:** If the user sees a directory listing, Guide them to update the Virtual Host config.
 

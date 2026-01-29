@@ -24,12 +24,27 @@ Before generating documentation:
 ### 2.2 Input Directories (STRICT SOURCE OF TRUTH)
 | Source | Path | Purpose |
 |--------|------|---------|
-| **Primary Metadata** | `.agent/context/` | Project Name, Description, Rules (Parse MD files like `DOCUMENTACION_*.md`) |
-| **Supporting Docs** | `.agent/docs/` | Diagrams, Technical Reports |
-| **Code Structure** | `app/` | Module detection (Entities) ONLY. |
+| **Primary Codebase** | `app/`, `config/`, `routes/` | **SOURCE OF TRUTH**. Real logic, entities, and access control. |
+| **Supporting Docs** | `.agent/docs/` | Diagrams, Technical Reports, non-code context. |
+| **Supporting Metadata** | `.agent/context/` | Project Name, Description, Kanban, Rules (Parse MD files). |
 
-> **CRITICAL RULE**: The `public/docs/data/*.json` files MUST be populated using information extracted **exclusively** from `.agent/docs` and `.agent/context`. NEVER use example data from the template.
-> **NOTE**: For Access Control content, refer to `.agent/roles/roles.json` and `PrivilegioService`. **Ignore Spatie patterns** as they are deprecated/removed.
+> **CRITICAL RULE**: The `public/docs/data/*.json` files MUST be populated primarily using information extracted **from the CODEBASE**. Files in `.agent/docs` are supplementary.
+
+### 2.3 Multi-Source Entity Discovery (CORE LOGIC)
+> [!IMPORTANT]
+> **Adopting Data Modeler Standard**: We utilize the "Multi-Source Entity Discovery" logic to ensure no entity is left undocumented.
+
+**Discovery Priority (High to Low)**:
+1.  **Laravel Models** (`app/Models/*.php`): The absolute truth for business entities.
+2.  **Laravel Migrations** (`database/migrations/`): The truth for data structure.
+3.  **Modules Config** (`config/modulos.php`): The truth for UI modules.
+4.  **Routes & Policies** (`routes/web.php`, `app/Policies/`): The truth for Use Cases and Access.
+
+**Merge Strategy**:
+- Collect all entities from the 4 sources.
+- Deduplicate (normalize names).
+- If an entity exists in Code but not in Docs -> **Auto-Generate Documentation Placeholder**.
+- If an entity exists in Docs but not in Code -> **Mark as Deprecated/Legacy**.
 
 ## 3. OUTPUT TARGETS (WRITE)
 
@@ -58,19 +73,81 @@ public/docs/
 
 ## 4. AUTONOMOUS GENERATION LOGIC
 
-### 4.1 Data Extraction Methods
+### 4.0 PRE-GENERATION ENTITY AUDIT (MANDATORY)
 
-| Method | Source | Parses | Output |
-|--------|--------|--------|--------|
-| `updateProjectMetadata()` | `.agent/context/*.md` | H1 titles, first paragraph. **ALWAYS set `lastUpdated` to NOW**. | `project.json` |
-| `updateModulesFromCode()` | `app/Models/*`, `app/Http/Controllers/*.php`, `app/Livewire/**/*.php` | Class names, folder structure | `modules.json` |
-| `updateDiagrams()` | `.agent/docs/*.xml` | XML diagram files | `diagrams.json` |
-| `extractBusinessRules()` | `.agent/context/*.md`, `.agent/docs/*.md` | Lines with "regla", "restricción", "permiso" | `rules.json` |
-| `extractUseCases()` | `.agent/docs/*.md`, `app/Http/Controllers/*`, `routes/web.php` | H3 headings, public methods, route definitions | `usecases.json` |
-| `extractKanban()` | `.agent/context/*.md` | "TODO", "Pendiente", "Completado" sections | `kanban.json` |
-| `extractSkillsInventory()` | `.agent/skills/*/SKILL.md` | YAML frontmatter, H2/H3 sections | `skills.json` |
+> [!CAUTION]
+> **Before generating ANY documentation**, verify ALL entities are captured. Missing entities = incomplete documentation.
 
-### 4.1.1 Skills Inventory Generation (NEW)
+#### Purpose
+Detect entities (models, tables) that exist in code but are NOT documented, preventing gaps like COMPROMISOS being absent.
+
+#### Audit Sources
+
+| Source | Location | Check For |
+|--------|----------|-----------|
+| **Models** | `app/Models/*.php` | Laravel model classes |
+| **Migrations** | `database/migrations/*create*table*.php` | Table creation scripts |
+| **Model Data** | `public/docs/data/diagrams/model-data.json` | Documented tables |
+| **Modules Config** | `config/modulos.php` | Menu modules |
+
+#### Audit Logic
+
+```php
+// 1. Collect all models
+$models = collect(glob(app_path('Models/*.php')))
+    ->map(fn($f) => basename($f, '.php'))
+    ->filter(fn($m) => $m !== 'Model'); // Exclude base class
+
+// 2. Get documented tables
+$modelData = json_decode(file_get_contents('public/docs/data/diagrams/model-data.json'));
+$documentedTables = collect($modelData->tables ?? [])->pluck('name');
+
+// 3. Convert model names to table names
+$expectedTables = $models->map(fn($m) => Str::snake(Str::plural($m)));
+
+// 4. Find missing
+$missing = $expectedTables->diff($documentedTables);
+
+// 5. Report and auto-fix
+if ($missing->isNotEmpty()) {
+    Log::warning('⚠️ UNDOCUMENTED ENTITIES: ' . $missing->implode(', '));
+    // Trigger model-data regeneration
+}
+```
+
+#### Validation Checklist
+
+- [ ] All `app/Models/*.php` have corresponding entries in `model-data.json`
+- [ ] All `config/modulos.php` modules have corresponding model documentation
+- [ ] No 404 errors when rendering Modelo de Datos section
+
+#### Auto-Fix Actions
+
+| Issue | Action |
+|-------|--------|
+| Model exists, table missing in `model-data.json` | Regenerate `model-data.json` via data-modeler |
+| Table in migrations but not in `schema_base.sql` | Add to SQL file |
+| Module in menu but no documentation | Generate placeholder module entry |
+
+---
+
+### 4.1 Data Extraction Methods (REVERSE ENGINEERING)
+
+| Method | Source (Code based) | Output |
+|--------|---------------------|--------|
+| `updateModulesFromCode()` | `app/Models/*`, `app/Http/Controllers/*`, `config/modulos.php` | `modules.json` |
+| `extractBusinessRules()` | `app/Http/Requests/*.php`, `app/Models/*.php` (`$rules`) | `rules.json` |
+| `extractUseCases()` | `routes/web.php` (Middleware groups), `app/Policies/*.php` | `usecases.json` |
+| `loadModelData()` | `public/docs/data/diagrams/model-data.json` (from Data Modeler) | Model Section |
+| `updateProjectMetadata()` | `.agent/context/*.md` (Supporting text) | `project.json` |
+
+### 4.1.0 Model Data Integration (CRITICAL)
+The documentation viewer MUST always display the **Modelo de Datos** section.
+- **Source**: `public/docs/data/diagrams/model-data.json` (This file is generated by the **Data Modeler** skill).
+- **Fallback**: If file is missing, Project Docs must trigger `data-modeler` in "Scan Mode" to generate it.
+
+### 4.1.1 Skills Inventory Generation
+(Kept as is: Extracts from `.agent/skills/*/SKILL.md`)
 The `extractSkillsInventory()` method generates a comprehensive report of all agent skills:
 
 **Source**: `.agent/skills/*/SKILL.md`
@@ -130,25 +207,35 @@ The `public/docs/index.html` viewer MUST include a **"Skills & Automation"** sec
 3.  **Update**: Refresh ALL JSON files from sources.
 4.  **Notify**: If significant changes (new modules), notify the user.
 
-### 4.1.2 Reverse Engineering Logic (Livewire -> Flowchart)
-To ensure diagrams reflect the *actual* implemented logic, use this reverse engineering strategy:
+### 4.1.2 Reverse Engineering Logic (Code -> Diagrams)
+To ensure diagrams reflect the *actual* implemented logic, use this reverse engineering strategy on BOTH Livewire components and Standard Controllers:
 
-1.  **Scan Target**: `app/Livewire/**/*.php`
-2.  **Role Inference**:
-    - Namespace `Admin\*` -> Role: `admin` (Color: Red)
-    - Namespace `Contratista\*` -> Role: `contratista` (Color: Green)
-    - Namespace `Principal\*` -> Role: `principal` (Color: Blue)
-3.  **Flow Detection**:
-    - `mount()` -> **Start Node** ("Inicia Componente")
-    - `render()` -> **View Node** ("Muestra Vista")
-    - `save()`, `submit()`, `store()` -> **Action Node** ("Guarda/Procesa")
-    - `delete()`, `destroy()` -> **Hazard Node** ("Elimina Registro")
-    - `validate()` calls -> **Decision Node** ("Valida Datos")
-    - **Controllers**: `index()` (List), `show()` (View), `store()` (Create), `update()` (Edit).
-5.  **Validation (Quality Gate)**:
-    - Analyzed flow MUST have **> 2 Nodes** (e.g., Start -> Process -> End).
-    - If nodes <= 2, consider extraction FAILED.
-6.  **Output**: Generate `public/docs/data/diagrams/flow_{component_name}.xml`.
+**1. Scan Targets**: `app/Livewire/**/*.php` AND `app/Http/Controllers/**/*.php`
+
+**2. Role Inference (Namespace Based)**:
+- `Admin\*` -> Role: `admin` (Color: Red)
+- `Contratista\*` -> Role: `contratista` (Color: Green)
+- `Principal\*` -> Role: `principal` (Color: Blue)
+- `Public\*` or no prefix -> Role: `guest` (Color: Grey)
+
+**3. Logic Flow Detection**:
+- **Livewire**:
+    - `mount()` -> Start Node
+    - `render()` -> View Node
+    - `save()`, `submit()` -> Process Node
+    - `validate()` -> Decision Node
+- **Controllers**:
+    - `index()` -> View Node (List)
+    - `store()` -> Process Node (Create)
+    - `update()` -> Process Node (Edit)
+    - `destroy()` -> Hazard Node (Delete)
+    - `FormRequest` usage -> Decision Node (Validation)
+
+**4. Module Linkage**:
+- Map Controller `ModelNameController` -> Module `ModelName`.
+- If `ModelName` doesn't exist in `modules.json`, create it dynamically.
+
+**5. Output**: Generate `public/docs/data/diagrams/flow_{module_name}.xml`.
 
 ### 4.1.3 Consistency Assurance (Module-Diagram-UseCase)
 > **RULE**: Every identified module MUST have at least one Diagram and one Use Case per Role.
@@ -165,6 +252,29 @@ To ensure diagrams reflect the *actual* implemented logic, use this reverse engi
         - `viewAny` -> Use Case "Ver Listado".
         - `create` -> Use Case "Crear Registro".
 
+### 4.1.4 Business Rules Extraction Strategy
+Convert Laravel FormRequest validations into human-readable business rules.
+
+**Source**: `app/Http/Requests/*.php`
+
+**Mapping Logic**:
+- `required` -> "El campo [field] es obligatorio."
+- `unique:table,col` -> "El valor de [field] debe ser único en el sistema."
+- `exists:table,col` -> "El [field] seleccionado debe existir en el registro de [table]."
+- `date|after:tomorrow` -> "La fecha debe ser posterior al día actual."
+- `min:X` -> "Debe tener al menos X caracteres/cantidad."
+
+**Output Format** (`rules.json`):
+```json
+{
+  "module": "Usuarios",
+  "source": "StoreUserRequest.php",
+  "rules": [
+    "El rut es obligatorio y debe ser único.",
+    "El email debe ser válido."
+  ]
+}
+```
 
 ### 4.3 Integration with 'Use Skills'
 - When triggered as part of the full chain, this skill runs LAST to capture the final state of the project.

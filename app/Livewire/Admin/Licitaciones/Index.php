@@ -25,7 +25,7 @@ class Index extends Component
     public function aprobarLicitacion($id)
     {
         $licitacion = Licitacion::findOrFail($id);
-        
+
         if ($licitacion->estado !== 'lista_para_publicar') {
             session()->flash('error', 'Solo se pueden aprobar licitaciones listas para publicar.');
             return;
@@ -53,7 +53,7 @@ class Index extends Component
     public function observarLicitacion($id, $observacion = '')
     {
         $licitacion = Licitacion::findOrFail($id);
-        
+
         $licitacion->update([
             'estado' => 'observada_por_ryce',
             'observaciones_ryce' => $observacion ?: 'Requiere revisión adicional.',
@@ -80,7 +80,7 @@ class Index extends Component
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('titulo', 'like', '%' . $this->search . '%')
-                      ->orWhere('codigo_licitacion', 'like', '%' . $this->search . '%');
+                        ->orWhere('codigo_licitacion', 'like', '%' . $this->search . '%');
                 });
             })
             ->when($this->filterEstado, function ($query) {
@@ -93,13 +93,21 @@ class Index extends Component
                 if ($this->filterPrecalificacion === 'si') {
                     $query->where('requiere_precalificacion', true);
                 } elseif ($this->filterPrecalificacion === 'no') {
-                    $query->where(function($q) {
+                    $query->where(function ($q) {
                         $q->where('requiere_precalificacion', false)
-                          ->orWhereNull('requiere_precalificacion');
+                            ->orWhereNull('requiere_precalificacion');
                     });
                 }
             })
-            ->orderByRaw("FIELD(estado, 'lista_para_publicar', 'observada_por_ryce', 'publicada', 'borrador') ASC")
+            ->orderByRaw("
+                CASE estado
+                    WHEN 'lista_para_publicar' THEN 1
+                    WHEN 'observada_por_ryce' THEN 2
+                    WHEN 'publicada' THEN 3
+                    WHEN 'borrador' THEN 4
+                    ELSE 5
+                END ASC
+            ")
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 

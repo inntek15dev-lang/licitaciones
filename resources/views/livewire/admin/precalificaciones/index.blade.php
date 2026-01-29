@@ -67,6 +67,7 @@
                 <tr>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Contratista</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Licitación</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Indicadores Corp.</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Estado</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Fecha Solicitud</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Acciones</th>
@@ -84,6 +85,31 @@
                     <td class="px-6 py-4">
                         <div class="text-sm text-gray-900 dark:text-white">{{ Str::limit($precal->licitacion->titulo ?? 'N/A', 40) }}</div>
                         <div class="text-xs text-gray-500">{{ $precal->licitacion->codigo_licitacion ?? '' }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex gap-1">
+                            <!-- HSE Alert -->
+                            @if($precal->tasa_accidentabilidad > 5)
+                            <div class="group relative">
+                                <span class="text-red-500 cursor-help">⚠️</span>
+                                <span class="invisible group-hover:visible absolute bottom-full left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-800 text-white text-xs rounded shadow-lg whitespace-nowrap z-10">
+                                    Alta Accidentabilidad: {{ $precal->tasa_accidentabilidad }}%
+                                </span>
+                            </div>
+                            @endif
+
+                            <!-- ISO Status -->
+                            @if($precal->tiene_iso_9001)
+                            <span class="text-xs px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded border border-blue-200" title="ISO 9001">9001</span>
+                            @endif
+                            @if($precal->tiene_iso_45001)
+                            <span class="text-xs px-1.5 py-0.5 bg-green-100 text-green-700 rounded border border-green-200" title="ISO 45001">45001</span>
+                            @endif
+                            
+                            @if(!$precal->tiene_iso_9001 && !$precal->tiene_iso_45001 && $precal->tasa_accidentabilidad <= 5)
+                            <span class="text-xs text-gray-400">-</span>
+                            @endif
+                        </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         @switch($precal->estado)
@@ -116,7 +142,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="5" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                    <td colspan="6" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                         <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>

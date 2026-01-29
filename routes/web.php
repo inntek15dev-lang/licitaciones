@@ -42,10 +42,15 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('licitaciones', AdminLicitacionesIndex::class)->name('licitaciones');
     Route::get('licitaciones/crear', AdminLicitacionesCreate::class)->name('licitaciones.create');
     Route::get('licitaciones/{id}', AdminLicitacionesShow::class)->name('licitaciones.show');
-    
+
     // Precalificaciones
     Route::get('precalificaciones', AdminPrecalificacionesIndex::class)->name('precalificaciones');
     Route::get('precalificaciones/{precalificacion}', AdminPrecalificacionesRevisar::class)->name('precalificaciones.revisar');
+
+    // API Sync
+    Route::resource('api-sync', \App\Http\Controllers\generic\ApiSyncController::class)->except(['show', 'destroy']);
+    Route::get('api-sync/{apiSync}/execute', [\App\Http\Controllers\generic\ApiSyncController::class, 'execute'])->name('api-sync.execute');
+    Route::post('api-sync/{apiSync}/test', [\App\Http\Controllers\generic\ApiSyncController::class, 'test'])->name('api-sync.test');
 });
 
 // Rutas de Principal (Empresas Principales)
@@ -66,5 +71,5 @@ Route::middleware(['auth', 'verified'])->prefix('contratista')->name('contratist
     Route::get('ofertas', ContratistaOfertasIndex::class)->name('ofertas');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 

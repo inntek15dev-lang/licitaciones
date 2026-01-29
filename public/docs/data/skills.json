@@ -1,18 +1,65 @@
 {
-    "generated_at": "2026-01-28T12:47:00",
-    "total_skills": 7,
+    "generated_at": "2026-01-29T16:00:00",
+    "total_skills": 9,
     "skills": [
+        {
+            "id": "maintenance",
+            "name": "Code Maintenance",
+            "description": "Limpieza y organización del workspace"
+        },
+        {
+            "id": "naming-integrity",
+            "name": "Naming Integrity",
+            "description": "Validación de nombres seguros"
+        },
+        {
+            "id": "env-assurance",
+            "name": "Environment Assurance",
+            "description": "Verificación de entorno (Laragon/Docker)"
+        },
+        {
+            "id": "data-modeler",
+            "name": "Data Modeler",
+            "description": "Descubrimiento y modelado de BD"
+        },
+        {
+            "id": "sql-to-laravel",
+            "name": "SQL directly to Laravel",
+            "description": "Transformación SQL a código Laravel"
+        },
+        {
+            "id": "add-generic-sync",
+            "name": "Generic Sync Module",
+            "description": "Módulo de sincronización API genérica"
+        },
+        {
+            "id": "privilegios-engine",
+            "name": "Privilegios Engine",
+            "description": "Gestión de roles y permisos"
+        },
+        {
+            "id": "view-assurance",
+            "name": "View Assurance",
+            "description": "Validación de rutas y seguridad en vistas"
+        },
         {
             "id": "project-docs",
             "name": "Project Documentation",
-            "priority": "NORMAL",
-            "description": "Generación de documentación con Quality Gates."
+            "description": "Documentación del proyecto"
         }
     ],
     "execution_chain": {
         "order": [
+            "maintenance",
+            "naming-integrity",
+            "env-assurance",
+            "data-modeler",
+            "sql-to-laravel",
+            "add-generic-sync",
+            "privilegios-engine",
+            "view-assurance",
             "project-docs"
         ],
-        "notes": "Integrity Mode Execution"
+        "notes": "Full Scan Execution via SKILL ALL"
     }
 }
