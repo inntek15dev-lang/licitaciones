@@ -1,3 +1,100 @@
 {
-    "decisions": []
+    "tasks": [
+        {
+            "id": "reuniones-accountability",
+            "title": "Registro de Reuniones de Accountability",
+            "description": "Cargar y almacenar los registros de las reuniones mensuales de accountability entre contratistas y administradores de contrato",
+            "priority": "low",
+            "category": "feature",
+            "estimatedEffort": "days",
+            "relatedModule": "reuniones-accountability",
+            "requestedBy": "karla aguirre"
+        },
+        {
+            "id": "acciones-correctivas",
+            "title": "Gestión de Acciones Correctivas / Brechas",
+            "description": "Registrar acciones correctivas acordadas, asignar responsables, definir fechas de compromiso y hacer seguimiento al cierre",
+            "priority": "medium",
+            "category": "feature",
+            "estimatedEffort": "days",
+            "relatedModule": "acciones-correctivas",
+            "requestedBy": "karla aguirre / Katherine Dominguez"
+        },
+        {
+            "id": "conexion-acem",
+            "title": "Conexión con Base de Datos ACEM",
+            "description": "Integrar el sistema OIEM con la base de datos ACEM para traer datos de empresas (nombre, RUT, teléfono, tipo servicio, email)",
+            "priority": "high",
+            "category": "feature",
+            "estimatedEffort": "days",
+            "relatedModule": "conexion-acem",
+            "requestedBy": "Francisco García / Katherine Dominguez",
+            "blockedBy": "IT Abastible debe entregar estructura de datos y acceso"
+        },
+        {
+            "id": "carga-masiva",
+            "title": "Carga Masiva de Contratistas",
+            "description": "Herramienta para cargar múltiples contratistas desde archivo Excel/CSV o directamente desde ACEM",
+            "priority": "medium",
+            "category": "feature",
+            "estimatedEffort": "days",
+            "relatedModule": "carga-masiva",
+            "requestedBy": "maria jose aguilera"
+        },
+        {
+            "id": "carga-historico",
+            "title": "Carga de Histórico de Cumplimiento",
+            "description": "Cargar datos históricos de cumplimiento (3-6 meses atrás) desde los Excel actuales",
+            "priority": "low",
+            "category": "feature",
+            "estimatedEffort": "hours",
+            "relatedModule": null,
+            "requestedBy": "karla aguirre",
+            "pendingDecision": "Definir cuántos meses retroactivos cargar"
+        }
+    ],
+    "decisions": [
+        {
+            "id": "evidencia-obligatoria",
+            "question": "¿Es obligatorio cargar evidencia para cerrar un registro?",
+            "responsible": "Katherine/Karla",
+            "priority": "critical",
+            "status": "pending"
+        },
+        {
+            "id": "editar-datos-contratista",
+            "question": "¿Bloquear edición de datos maestros del contratista?",
+            "responsible": "Katherine",
+            "priority": "critical",
+            "status": "pending"
+        },
+        {
+            "id": "crear-usuarios",
+            "question": "¿Quién crea usuarios contratista - el mismo contratista o el admin de contrato?",
+            "responsible": "Katherine",
+            "priority": "medium",
+            "status": "pending"
+        },
+        {
+            "id": "eliminar-contratista",
+            "question": "¿Debe existir botón eliminar contratista o estar oculto/restringido?",
+            "responsible": "Katherine",
+            "priority": "medium",
+            "status": "pending"
+        },
+        {
+            "id": "plantillas-programas",
+            "question": "Estructura de elementos y actividades por programa",
+            "responsible": "maria jose / karla",
+            "priority": "critical",
+            "status": "pending"
+        },
+        {
+            "id": "hosting",
+            "question": "¿Dónde se alojará el sistema?",
+            "responsible": "IT Abastible",
+            "priority": "critical",
+            "status": "pending"
+        }
+    ]
 }

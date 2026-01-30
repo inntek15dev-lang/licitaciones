@@ -1,0 +1,22 @@
+<diagram type="flowchart" id="Edit">
+  <metadata>
+    <description>Flow for Edit</description>
+    <role>principal</role>
+  </metadata>
+  <nodes>
+    <node id="mount" type="process" x="200" y="50" label="mount" role="principal" color="#3b82f6"/>
+    <node id="nextStep" type="process" x="200" y="130" label="nextStep" role="principal" color="#3b82f6"/>
+    <node id="previousStep" type="process" x="200" y="210" label="previousStep" role="principal" color="#3b82f6"/>
+    <node id="goToStep" type="process" x="200" y="290" label="goToStep" role="principal" color="#3b82f6"/>
+    <node id="addRequisito" type="process" x="200" y="370" label="addRequisito" role="principal" color="#3b82f6"/>
+    <node id="removeRequisito" type="process" x="200" y="450" label="removeRequisito" role="principal" color="#3b82f6"/>
+    <node id="toggleRequisito" type="process" x="200" y="530" label="toggleRequisito" role="principal" color="#3b82f6"/>
+    <node id="marcarDocumentoEliminar" type="process" x="200" y="610" label="marcarDocumentoEliminar" role="principal" color="#3b82f6"/>
+    <node id="addDocumento" type="process" x="200" y="690" label="addDocumento" role="principal" color="#3b82f6"/>
+    <node id="removeNuevoDocumento" type="process" x="200" y="770" label="removeNuevoDocumento" role="principal" color="#3b82f6"/>
+    <node id="guardarBorrador" type="process" x="200" y="850" label="guardarBorrador" role="principal" color="#3b82f6"/>
+    <node id="enviarParaRevision" type="process" x="200" y="930" label="enviarParaRevision" role="principal" color="#3b82f6"/>
+    <node id="render" type="process" x="200" y="1010" label="render" role="principal" color="#3b82f6"/>
+
+  </nodes>
+</diagram>

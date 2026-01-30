@@ -1,0 +1,11 @@
+<diagram type="flowchart" id="Show">
+  <metadata>
+    <description>Flow for Show</description>
+    <role>principal</role>
+  </metadata>
+  <nodes>
+    <node id="mount" type="process" x="200" y="50" label="mount" role="principal" color="#3b82f6"/>
+    <node id="render" type="process" x="200" y="130" label="render" role="principal" color="#3b82f6"/>
+
+  </nodes>
+</diagram>

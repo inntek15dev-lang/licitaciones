@@ -4,18 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Documentación del Proyecto</title>
+    <title>OIEM Abastible - Documentación</title>
     <link rel="stylesheet" href="assets/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
     <script>
-        // Trailing Slash Enforcer
-        // Forces /docs -> /docs/ to ensure relative assets (assets/style.css) load correctly
-        (function () {
-            var path = window.location.pathname;
-            if (path !== '/' && !path.endsWith('/') && !path.endsWith('.html') && !path.includes('.')) {
-                console.warn('Enforcing trailing slash for relative assets...');
-                window.location.replace(path + '/');
+        // Initialize mermaid early
+        window.mermaidReady = new Promise((resolve) => {
+            if (typeof mermaid !== 'undefined') {
+                mermaid.initialize({ startOnLoad: false });
+                resolve(mermaid);
+            } else {
+                window.addEventListener('load', () => {
+                    if (typeof mermaid !== 'undefined') {
+                        mermaid.initialize({ startOnLoad: false });
+                        resolve(mermaid);
+                    } else {
+                        resolve(null);
+                    }
+                });
             }
-        })();
+        });
     </script>
 </head>
 
@@ -24,10 +32,9 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="logo">
-                <h1 id="app-title">Cargando...</h1>
-                <span class="version" id="version">-</span>
+                <h1>📊 OIEM</h1>
+                <span class="version" id="version">v0.0</span>
             </div>
-            <!-- ... nav menu remains same ... -->
             <nav class="nav-menu">
                 <a href="#" class="nav-item active" data-section="executive">
                     <span class="icon">📈</span> Resumen Gerencial
@@ -37,9 +44,6 @@
                 </a>
                 <a href="#" class="nav-item" data-section="modules">
                     <span class="icon">📦</span> Módulos
-                </a>
-                <a href="#" class="nav-item" data-section="er-diagram">
-                    <span class="icon">🗄️</span> Diagrama ER
                 </a>
                 <a href="#" class="nav-item" data-section="diagrams">
                     <span class="icon">🔀</span> Diagramas de Flujo
@@ -62,13 +66,13 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Executive Summary Section (Already generic enough, app.js populates it) -->
+            <!-- Executive Summary Section -->
             <section id="executive" class="section active">
                 <header class="section-header">
                     <h2>Resumen Gerencial</h2>
                     <p id="project-description">Cargando...</p>
                 </header>
-                <!-- ... stats grid remains same ... -->
+
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon">📦</div>
@@ -116,7 +120,7 @@
                     <div class="exec-card">
                         <h3>⚠️ Decisiones Pendientes</h3>
                         <span class="big-number" id="pending-decisions">0</span>
-                        <p class="status-note">Requieren respuesta</p>
+                        <p class="status-note">Requieren respuesta de Abastible</p>
                     </div>
                     <div class="exec-card">
                         <h3>🔧 Stack Tecnológico</h3>
@@ -125,16 +129,18 @@
                 </div>
             </section>
 
-            <!-- Kanban Section (Generic) -->
+            <!-- Kanban Section -->
             <section id="kanban" class="section">
                 <header class="section-header">
                     <h2>Tablero Kanban</h2>
                     <p>Vista de funcionalidades por estado de desarrollo</p>
                 </header>
-                <div class="kanban-board" id="kanban-board"></div>
+                <div class="kanban-board" id="kanban-board">
+                    <!-- Populated by JS -->
+                </div>
             </section>
 
-            <!-- Modules Section (Generic) -->
+            <!-- Modules Section -->
             <section id="modules" class="section">
                 <header class="section-header">
                     <h2>Módulos del Sistema</h2>
@@ -148,25 +154,17 @@
                 <div class="modules-grid" id="modules-grid"></div>
             </section>
 
-            <!-- ER Diagram Section -->
-            <section id="er-diagram" class="section">
-                <header class="section-header">
-                    <h2>Diagrama Entidad-Relación</h2>
-                    <p>Estructura completa de la base de datos con tablas, campos, tipos y relaciones</p>
-                </header>
-                <div class="er-container" id="er-container">
-                    <!-- SVG will be loaded here by app.js -->
-                    <span class="text-muted">Cargando diagrama ER...</span>
-                </div>
-            </section>
-
-            <!-- Diagrams Section (Refactored) -->
+            <!-- Diagrams Section -->
             <section id="diagrams" class="section">
                 <header class="section-header">
                     <h2>Diagramas de Flujo</h2>
-                    <div class="diagram-selector" id="flow-selector">
-                        <!-- Populated dynamically by app.js -->
-                        <span class="text-muted">Cargando diagramas...</span>
+                    <div class="diagram-selector">
+                        <button class="diagram-btn active" data-diagram="data/diagrams/flow-registro.xml">Registro
+                            Mensual</button>
+                        <button class="diagram-btn" data-diagram="data/diagrams/flow-auditoria.xml">Auditoría</button>
+                        <button class="diagram-btn" data-diagram="data/diagrams/flow-reapertura.xml">Reapertura</button>
+                        <button class="diagram-btn" data-diagram="data/diagrams/lifecycle-data.xml">Ciclo de
+                            Vida</button>
                     </div>
                 </header>
                 <div class="diagram-container">
@@ -174,20 +172,36 @@
                 </div>
             </section>
 
-            <!-- Use Cases Section (Diagram + List) -->
+            <!-- Data Model Section -->
+            <section id="datamodel" class="section">
+                <header class="section-header">
+                    <h2>🗄️ Modelo de Datos</h2>
+                    <p>Diagrama Entidad-Relación del sistema</p>
+                </header>
+                <div class="datamodel-container">
+                    <div class="datamodel-stats" id="datamodel-stats"></div>
+                    <div class="mermaid-container">
+                        <div id="mermaid-erd" class="mermaid"></div>
+                    </div>
+                    <div class="tables-grid" id="tables-grid"></div>
+                </div>
+            </section>
+
+            <!-- Use Cases Section -->
             <section id="usecases" class="section">
                 <header class="section-header">
-                    <h2>Casos de Uso</h2>
-                    <div class="diagram-selector" id="usecase-selector">
-                        <!-- Populated dynamically by app.js from diagrams.json -->
-                        <span class="text-muted">Cargando diagramas...</span>
+                    <h2>Casos de Uso por Rol</h2>
+                    <div class="diagram-selector">
+                        <button class="diagram-btn active"
+                            data-diagram="data/diagrams/usecase-admin.xml">Administrador</button>
+                        <button class="diagram-btn"
+                            data-diagram="data/diagrams/usecase-contratista.xml">Contratista</button>
+                        <button class="diagram-btn" data-diagram="data/diagrams/usecase-usuario.xml">Usuario
+                            Operativo</button>
                     </div>
                 </header>
                 <div class="diagram-container">
                     <canvas id="usecase-canvas" width="500" height="700"></canvas>
-                </div>
-                <div class="usecases-container" id="usecases-list">
-                    <!-- List populated by app.js from usecases.json -->
                 </div>
             </section>
 

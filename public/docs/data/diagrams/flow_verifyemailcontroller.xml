@@ -1,0 +1,10 @@
+<diagram type="flowchart" id="VerifyEmailController">
+  <metadata>
+    <description>Flow for VerifyEmailController</description>
+    <role>usuario</role>
+  </metadata>
+  <nodes>
+    <node id="__invoke" type="process" x="200" y="50" label="__invoke" role="usuario" color="#3b82f6"/>
+
+  </nodes>
+</diagram>

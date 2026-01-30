@@ -1,3 +1,96 @@
 {
-    "usecases": []
+    "generated_at": "2026-01-29T14:15:51-03:00",
+    "actors": [
+        {
+            "id": "admin",
+            "name": "Administrador",
+            "description": "Gestiona la plataforma, programas y usuarios",
+            "color": "#ef4444"
+        },
+        {
+            "id": "contratista",
+            "name": "Contratista",
+            "description": "Empresa externa que reporta cumplimiento",
+            "color": "#22c55e"
+        }
+    ],
+    "usecases": [
+        {
+            "id": "uc-admin-dashboard",
+            "name": "Ver Dashboard General",
+            "actor": "admin",
+            "module": "Dashboard Admin",
+            "description": "Visualizar KPIs y estado general del cumplimiento"
+        },
+        {
+            "id": "uc-admin-programas",
+            "name": "Gestionar Programas",
+            "actor": "admin",
+            "module": "Programas",
+            "description": "Crear, editar y asignar programas de seguridad"
+        },
+        {
+            "id": "uc-admin-contratistas",
+            "name": "Gestionar Contratistas",
+            "actor": "admin",
+            "module": "Contratistas",
+            "description": "Administrar empresas, asignar administradores y sincronizar datos"
+        },
+        {
+            "id": "uc-admin-users",
+            "name": "Gestionar Usuarios",
+            "actor": "admin",
+            "module": "Usuarios",
+            "description": "Administrar cuentas de acceso al sistema"
+        },
+        {
+            "id": "uc-admin-registros",
+            "name": "Gestionar Registros",
+            "actor": "admin",
+            "module": "Registros",
+            "description": "Revisar registros, exportar logs y gestionar reaperturas"
+        },
+        {
+            "id": "uc-admin-roles",
+            "name": "Gestionar Roles y Privilegios",
+            "actor": "admin",
+            "module": "Seguridad",
+            "description": "Definir roles y permisos granulares"
+        },
+        {
+            "id": "uc-admin-apisync",
+            "name": "Configurar Sincronización API",
+            "actor": "admin",
+            "module": "Generic Sync",
+            "description": "Configurar endpoints y mapeos para sincronización externa"
+        },
+        {
+            "id": "uc-cont-dashboard",
+            "name": "Ver Dashboard Contratista",
+            "actor": "contratista",
+            "module": "Dashboard Contratista",
+            "description": "Ver estado de cumplimiento propio"
+        },
+        {
+            "id": "uc-cont-registro",
+            "name": "Realizar Registro Mensual",
+            "actor": "contratista",
+            "module": "Registro",
+            "description": "Cargar evidencias y reportar cumplimiento mensual"
+        },
+        {
+            "id": "uc-cont-solicitud",
+            "name": "Solicitar Reapertura",
+            "actor": "contratista",
+            "module": "Solicitudes",
+            "description": "Solicitar edición de registros cerrados"
+        },
+        {
+            "id": "uc-cont-users",
+            "name": "Gestionar Usuarios Propios",
+            "actor": "contratista",
+            "module": "Usuarios",
+            "description": "Crear sub-usuarios operativos"
+        }
+    ]
 }

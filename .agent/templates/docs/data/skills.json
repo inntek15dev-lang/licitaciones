@@ -1,0 +1,375 @@
+{
+    "generated_at": "2026-01-29T14:10:00-03:00",
+    "total_skills": 9,
+    "skills": [
+        {
+            "id": "add-generic-sync",
+            "name": "Add Generic Sync",
+            "description": "Crea un módulo de sincronización genérica parametrizable",
+            "path": ".agent/skills/add-generic-sync/SKILL.md",
+            "role": "API Integration Specialist",
+            "objective": "Integrate external APIs with local database using a configurable UI.",
+            "trigger_conditions": [
+                "When command ADDSYNC is invoked",
+                "Explicit request for generic sync module"
+            ],
+            "main_actions": [
+                {
+                    "section": "Module Generation",
+                    "items": [
+                        "Create migration for config table",
+                        "Generate Controller/Model/Views"
+                    ]
+                },
+                {
+                    "section": "Privilege Integration",
+                    "items": [
+                        "Ensure Admin role access",
+                        "Protect routes with dynamic privilege middleware"
+                    ]
+                }
+            ],
+            "priority": "NORMAL",
+            "execution_order": 8,
+            "dependencies": [
+                "privilegios-engine"
+            ]
+        },
+        {
+            "id": "maintenance",
+            "name": "Code Maintenance & Organization",
+            "description": "Autonomous skill for code cleanup, organizing workspace artifacts, and ensuring project structure integrity.",
+            "path": ".agent/skills/maintenance/SKILL.md",
+            "role": "Project Caretaker & Organizer",
+            "objective": "Keep the project root clean, organize documentation/context, and ensure standard structure.",
+            "trigger_conditions": [
+                "When 'Usa tus skills' or 'Use your skills' is invoked",
+                "When the project root becomes cluttered (>5 loose files)",
+                "Explicit request for cleanup"
+            ],
+            "main_actions": [
+                {
+                    "section": "2.0 Enforce .agent Only Policy",
+                    "items": [
+                        "DELETE .gemini directory if it exists",
+                        "The project uses ONLY .agent/ for all agent-related configurations"
+                    ]
+                },
+                {
+                    "section": "2.1 Artifact Relocation",
+                    "items": [
+                        "Move context files to .agent/context/",
+                        "Ensure SQL dumps are in .agent/BD/",
+                        "Remove temp files"
+                    ]
+                },
+                {
+                    "section": "2.2 Structure Verification",
+                    "items": [
+                        "Ensure public/docs exists",
+                        "Ensure .agent directory structure is intact"
+                    ]
+                }
+            ],
+            "priority": "NORMAL",
+            "execution_order": 1,
+            "dependencies": []
+        },
+        {
+            "id": "naming-integrity",
+            "name": "Naming Integrity & Safety",
+            "description": "Ensures all file names, directory names, conversation titles, and record identifiers follow safe naming conventions to prevent IDE crashes, filesystem errors, and project corruption.",
+            "path": ".agent/skills/naming-integrity/SKILL.md",
+            "role": "Naming Guardian & Integrity Enforcer",
+            "objective": "Guarantee that ALL created/renamed files, directories, and records use safe, clean naming conventions.",
+            "trigger_conditions": [
+                "ALWAYS ACTIVE - This skill applies to EVERY action that creates or renames files/directories",
+                "Before any file creation, rename, or save operation",
+                "When auditing existing files for naming violations"
+            ],
+            "main_actions": [
+                {
+                    "section": "Forbidden Patterns",
+                    "items": [
+                        "No special characters",
+                        "No HTML/XML tags",
+                        "No code snippets in names"
+                    ]
+                },
+                {
+                    "section": "Safe Naming Conventions",
+                    "items": [
+                        "snake_case for files",
+                        "kebab-case for directories",
+                        "PascalCase for Laravel models/controllers"
+                    ]
+                }
+            ],
+            "priority": "HIGH",
+            "execution_order": 2,
+            "dependencies": []
+        },
+        {
+            "id": "env-assurance",
+            "name": "Environment and Connectivity Assurance",
+            "description": "Focus on environment integrity (Laragon/Docker), connectivity assurance (DB/Vite), and autonomous adaptation (drift/failure detection).",
+            "path": ".agent/skills/env-assurance/SKILL.md",
+            "role": "Senior Environment & Connectivity Engineer",
+            "objective": "Ensure environment integrity and connectivity assurance across Laragon (Windows) and Docker (Linux).",
+            "trigger_conditions": [
+                "Before database migrations or builds",
+                "When symlink errors occur",
+                "When HMR failures are detected"
+            ],
+            "main_actions": [
+                {
+                    "section": "Environment Integrity",
+                    "items": [
+                        "Verify consistency between .env and runtime",
+                        "Handle Windows/Linux differences"
+                    ]
+                },
+                {
+                    "section": "Connectivity Assurance",
+                    "items": [
+                        "Database layer ping",
+                        "Vite port verification",
+                        "Service availability checks"
+                    ]
+                }
+            ],
+            "priority": "NORMAL",
+            "execution_order": 3,
+            "dependencies": []
+        },
+        {
+            "id": "sql-to-laravel",
+            "name": "SQL to Laravel",
+            "description": "Transform SQL scripts into structured Laravel projects, populate data from .agent/BD, and optimize DB structure.",
+            "path": ".agent/skills/sql-to-laravel/SKILL.md",
+            "role": "Senior Laravel Data Architect",
+            "objective": "Transform SQL scripts into structured Laravel projects (Migrations, Models, Seeders) and ensure distinct data population.",
+            "trigger_conditions": [
+                "When SQL files exist in .agent/BD/",
+                "When database schema changes are needed"
+            ],
+            "main_actions": [
+                {
+                    "section": "Pre-validation",
+                    "items": [
+                        "Identify Laravel version",
+                        "Lint SQL for issues"
+                    ]
+                },
+                {
+                    "section": "Database Hierarchy & Ordering",
+                    "items": [
+                        "Dependency mapping",
+                        "Migration sequencing",
+                        "Seeder ordering"
+                    ]
+                },
+                {
+                    "section": "Component Generation",
+                    "items": [
+                        "Migrations with Anonymous Classes",
+                        "Models with DocBlocks",
+                        "Seeders with chunking"
+                    ]
+                }
+            ],
+            "priority": "NORMAL",
+            "execution_order": 4,
+            "dependencies": [
+                "env-assurance"
+            ]
+        },
+        {
+            "id": "data-modeler",
+            "name": "Data Modeler",
+            "description": "Autonomous skill for database modeling from documentation when no SQL exists, then generates complete Laravel stack (Migrations, Models, Seeders).",
+            "path": ".agent/skills/data-modeler/SKILL.md",
+            "role": "Senior Database Architect & Laravel Specialist",
+            "objective": "Model database from documentation OR transform existing SQL into complete Laravel components.",
+            "trigger_conditions": [
+                "When SKILL DATAMODEL command is invoked",
+                "When no SQL files exist in .agent/BD/ and documentation is available",
+                "When database schema generation is needed from scratch"
+            ],
+            "main_actions": [
+                {
+                    "section": "Phase 1: Documentation Mining",
+                    "items": [
+                        "Scan all files in .agent/docs/",
+                        "Extract tables, columns, types and relationships",
+                        "Build entity model from documentation"
+                    ]
+                },
+                {
+                    "section": "Phase 2: SQL Generation",
+                    "items": [
+                        "Generate normalized MySQL schema",
+                        "Create schema_base.sql in .agent/BD/",
+                        "Order tables by dependency"
+                    ]
+                },
+                {
+                    "section": "Phase 3: Laravel Generation",
+                    "items": [
+                        "Generate Migrations (ordered by dependency)",
+                        "Generate Models (with relationships)",
+                        "Generate Seeders (with DatabaseSeeder ordering)"
+                    ]
+                },
+                {
+                    "section": "Phase 4: Documentation Output",
+                    "items": [
+                        "Generate model-data.json for project-docs",
+                        "Include Mermaid ERD syntax"
+                    ]
+                }
+            ],
+            "priority": "NORMAL",
+            "execution_order": 4,
+            "dependencies": [
+                "env-assurance"
+            ]
+        },
+        {
+            "id": "privilegios-engine",
+            "name": "Privilegios Engine",
+            "description": "Autonomous skill for managing roles and granular permissions (read/write/excec) per module, synchronized from JSON config.",
+            "path": ".agent/skills/privilegios-engine/SKILL.md",
+            "role": "Privileges & Access Control Guardian",
+            "objective": "Ensure consistent role/privilege management across the entire application using NATIVE SYSTEM (NO SPATIE).",
+            "trigger_conditions": [
+                "When 'Usa tus skills' or 'Use your skills' is invoked",
+                "When a new controller, route, or module is created",
+                "When roles.json is modified"
+            ],
+            "main_actions": [
+                {
+                    "section": "Sync Roles & Privileges",
+                    "items": [
+                        "Run php artisan privilegios:sync",
+                        "Create/update roles from roles.json"
+                    ]
+                },
+                {
+                    "section": "Validate Routes/Controllers",
+                    "items": [
+                        "Check module exists in roles.json",
+                        "Ensure middleware is applied"
+                    ]
+                },
+                {
+                    "section": "Validate Code Changes",
+                    "items": [
+                        "Verify CheckPrivilegio middleware",
+                        "Ensure canRead/canWrite/canExcec methods are used"
+                    ]
+                }
+            ],
+            "priority": "HIGH",
+            "execution_order": 5,
+            "dependencies": [
+                "sql-to-laravel"
+            ]
+        },
+        {
+            "id": "view-assurance",
+            "name": "View Generation Assurance",
+            "description": "Ensures Blade views are generated with correct routing, dynamic URLs, and framework patterns to prevent common runtime errors.",
+            "path": ".agent/skills/view-assurance/SKILL.md",
+            "role": "View Quality Guardian",
+            "objective": "Prevent common Blade/Laravel view errors by validating and applying best practices.",
+            "trigger_conditions": [
+                "Creating or modifying .blade.php files",
+                "Implementing modals with dynamic actions",
+                "Using Alpine.js with Laravel routes"
+            ],
+            "main_actions": [
+                {
+                    "section": "No Hardcoded Roles",
+                    "items": [
+                        "Use @canRead, @canWrite, @canExcec instead of @role",
+                        "No Spatie directives"
+                    ]
+                },
+                {
+                    "section": "Dynamic Navigation",
+                    "items": [
+                        "Use x-navigation-menu components",
+                        "Filter by user privileges"
+                    ]
+                }
+            ],
+            "priority": "NORMAL",
+            "execution_order": 6,
+            "dependencies": [
+                "privilegios-engine"
+            ]
+        },
+        {
+            "id": "project-docs",
+            "name": "Project Documentation",
+            "description": "Autonomous documentation generator that monitors code changes, organizes context, and generates standardized documentation in public/docs.",
+            "path": ".agent/skills/project-docs/SKILL.md",
+            "role": "Project Documentation Engineer",
+            "objective": "Maintain synchronized, standardized project documentation that auto-updates with code changes and keeps the repo clean.",
+            "trigger_conditions": [
+                "Code files in app/, resources/, routes/, or database/ are modified",
+                "User explicitly requests documentation update",
+                "'Usa tus skills' or 'Use your skills' command is issued"
+            ],
+            "main_actions": [
+                {
+                    "section": "Code Organization",
+                    "items": [
+                        "Scan root for loose files",
+                        "Relocate to .agent/docs or .agent/context"
+                    ]
+                },
+                {
+                    "section": "Data Extraction",
+                    "items": [
+                        "Update project.json",
+                        "Update modules.json from Models",
+                        "Extract business rules",
+                        "Generate skills.json"
+                    ]
+                },
+                {
+                    "section": "Viewer Sections",
+                    "items": [
+                        "Skills & Automation section",
+                        "Execution chain diagram"
+                    ]
+                }
+            ],
+            "priority": "NORMAL",
+            "execution_order": 7,
+            "dependencies": [
+                "maintenance",
+                "naming-integrity",
+                "env-assurance",
+                "sql-to-laravel",
+                "privilegios-engine",
+                "view-assurance"
+            ]
+        }
+    ],
+    "execution_chain": {
+        "order": [
+            "maintenance",
+            "naming-integrity",
+            "env-assurance",
+            "data-modeler",
+            "sql-to-laravel",
+            "privilegios-engine",
+            "view-assurance",
+            "project-docs"
+        ],
+        "notes": "Execution order based on skill dependencies. data-modeler runs before sql-to-laravel. project-docs ALWAYS runs last to capture final state."
+    }
+}

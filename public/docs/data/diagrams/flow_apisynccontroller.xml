@@ -1,0 +1,16 @@
+<diagram type="flowchart" id="ApiSyncController">
+  <metadata>
+    <description>Flow for ApiSyncController</description>
+    <role>usuario</role>
+  </metadata>
+  <nodes>
+    <node id="index" type="process" x="200" y="50" label="index" role="usuario" color="#3b82f6"/>
+    <node id="create" type="process" x="200" y="130" label="create" role="usuario" color="#3b82f6"/>
+    <node id="store" type="process" x="200" y="210" label="store" role="usuario" color="#3b82f6"/>
+    <node id="edit" type="process" x="200" y="290" label="edit" role="usuario" color="#3b82f6"/>
+    <node id="update" type="process" x="200" y="370" label="update" role="usuario" color="#3b82f6"/>
+    <node id="execute" type="process" x="200" y="450" label="execute" role="usuario" color="#3b82f6"/>
+    <node id="test" type="process" x="200" y="530" label="test" role="usuario" color="#3b82f6"/>
+
+  </nodes>
+</diagram>

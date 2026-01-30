@@ -1,65 +1,60 @@
 {
-    "generated_at": "2026-01-29T16:00:00",
+    "generated_at": "2026-01-30T12:21:48+00:00",
     "total_skills": 9,
     "skills": [
         {
-            "id": "maintenance",
-            "name": "Code Maintenance",
-            "description": "Limpieza y organización del workspace"
-        },
-        {
-            "id": "naming-integrity",
-            "name": "Naming Integrity",
-            "description": "Validación de nombres seguros"
-        },
-        {
-            "id": "env-assurance",
-            "name": "Environment Assurance",
-            "description": "Verificación de entorno (Laragon/Docker)"
+            "id": "add-generic-sync",
+            "name": "Add Generic Sync",
+            "description": "Skill automatizada del agente",
+            "path": ".agent\/skills\/add-generic-sync\/SKILL.md"
         },
         {
             "id": "data-modeler",
             "name": "Data Modeler",
-            "description": "Descubrimiento y modelado de BD"
+            "description": "Skill automatizada del agente",
+            "path": ".agent\/skills\/data-modeler\/SKILL.md"
         },
         {
-            "id": "sql-to-laravel",
-            "name": "SQL directly to Laravel",
-            "description": "Transformación SQL a código Laravel"
+            "id": "env-assurance",
+            "name": "Env Assurance",
+            "description": "Skill automatizada del agente",
+            "path": ".agent\/skills\/env-assurance\/SKILL.md"
         },
         {
-            "id": "add-generic-sync",
-            "name": "Generic Sync Module",
-            "description": "Módulo de sincronización API genérica"
+            "id": "maintenance",
+            "name": "Maintenance",
+            "description": "Skill automatizada del agente",
+            "path": ".agent\/skills\/maintenance\/SKILL.md"
+        },
+        {
+            "id": "naming-integrity",
+            "name": "Naming Integrity",
+            "description": "Skill automatizada del agente",
+            "path": ".agent\/skills\/naming-integrity\/SKILL.md"
         },
         {
             "id": "privilegios-engine",
             "name": "Privilegios Engine",
-            "description": "Gestión de roles y permisos"
+            "description": "Skill automatizada del agente",
+            "path": ".agent\/skills\/privilegios-engine\/SKILL.md"
+        },
+        {
+            "id": "project-docs",
+            "name": "Project Docs",
+            "description": "Skill automatizada del agente",
+            "path": ".agent\/skills\/project-docs\/SKILL.md"
+        },
+        {
+            "id": "sql-to-laravel",
+            "name": "Sql To Laravel",
+            "description": "Skill automatizada del agente",
+            "path": ".agent\/skills\/sql-to-laravel\/SKILL.md"
         },
         {
             "id": "view-assurance",
             "name": "View Assurance",
-            "description": "Validación de rutas y seguridad en vistas"
-        },
-        {
-            "id": "project-docs",
-            "name": "Project Documentation",
-            "description": "Documentación del proyecto"
+            "description": "Skill automatizada del agente",
+            "path": ".agent\/skills\/view-assurance\/SKILL.md"
         }
-    ],
-    "execution_chain": {
-        "order": [
-            "maintenance",
-            "naming-integrity",
-            "env-assurance",
-            "data-modeler",
-            "sql-to-laravel",
-            "add-generic-sync",
-            "privilegios-engine",
-            "view-assurance",
-            "project-docs"
-        ],
-        "notes": "Full Scan Execution via SKILL ALL"
-    }
+    ]
 }

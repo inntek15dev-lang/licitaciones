@@ -1,85 +1,158 @@
 {
     "modules": [
         {
-            "id": "auth",
-            "name": "Autenticación",
-            "description": "Control de Acceso (Admin/Principal/Contratista)",
-            "status": "completed",
-            "progress": 100,
-            "features": [
-                {
-                    "name": "Auth::routes",
-                    "status": "completed"
-                },
-                {
-                    "name": "Session Management",
-                    "status": "completed"
-                }
-            ]
+            "id": "apisyncconfig",
+            "name": "ApiSyncConfig",
+            "description": "Entidad de negocio: ApiSyncConfig",
+            "status": "active",
+            "progress": 100
         },
         {
-            "id": "maestros",
-            "name": "Maestros",
-            "description": "CRUD de Entidades Base",
-            "status": "completed",
-            "progress": 100,
-            "features": [
-                {
-                    "name": "Admin: Categorías",
-                    "status": "completed"
-                },
-                {
-                    "name": "Admin: Empresas",
-                    "status": "completed"
-                }
-            ]
+            "id": "catestado",
+            "name": "CatEstado",
+            "description": "Entidad de negocio: CatEstado",
+            "status": "active",
+            "progress": 100
         },
         {
-            "id": "licitaciones",
-            "name": "Licitaciones",
-            "description": "Ciclo de Negocio Principal",
-            "status": "completed",
-            "progress": 95,
-            "features": [
-                {
-                    "name": "Principal: Crear/Publicar",
-                    "status": "completed"
-                },
-                {
-                    "name": "Contratista: Ver/Buscar",
-                    "status": "completed"
-                }
-            ]
+            "id": "catmotivorechazo",
+            "name": "CatMotivoRechazo",
+            "description": "Entidad de negocio: CatMotivoRechazo",
+            "status": "active",
+            "progress": 100
         },
         {
-            "id": "ofertas",
-            "name": "Ofertas",
-            "description": "Postulaciones de Contratistas",
-            "status": "in-progress",
-            "progress": 85,
-            "features": [
-                {
-                    "name": "Contratista: Enviar Oferta",
-                    "status": "completed"
-                },
-                {
-                    "name": "Admin: Evaluar (Pendiente)",
-                    "status": "pending"
-                }
-            ]
+            "id": "cattipolicitacion",
+            "name": "CatTipoLicitacion",
+            "description": "Entidad de negocio: CatTipoLicitacion",
+            "status": "active",
+            "progress": 100
         },
         {
-            "id": "precalificacion",
-            "name": "Precalificación",
-            "description": "Gestión de Proveedores",
-            "status": "completed",
-            "progress": 100,
-            "features": [
-                {
-                    "name": "Solicitud -> Revisión -> Aprobación",
-                    "status": "completed"
-                }
-            ]
+            "id": "catalogorequisitoprecalificacion",
+            "name": "CatalogoRequisitoPrecalificacion",
+            "description": "Entidad de negocio: CatalogoRequisitoPrecalificacion",
+            "status": "active",
+            "progress": 100
+        },
+        {
+            "id": "categorialicitacion",
+            "name": "CategoriaLicitacion",
+            "description": "Entidad de negocio: CategoriaLicitacion",
+            "status": "active",
+            "progress": 100
+        },
+        {
+            "id": "consultarespuestalicitacion",
+            "name": "ConsultaRespuestaLicitacion",
+            "description": "Entidad de negocio: ConsultaRespuestaLicitacion",
+            "status": "active",
+            "progress": 100
+        },
+        {
+            "id": "documentolicitacion",
+            "name": "DocumentoLicitacion",
+            "description": "Entidad de negocio: DocumentoLicitacion",
+            "status": "active",
+            "progress": 100
+        },
+        {
+            "id": "documentooferta",
+            "name": "DocumentoOferta",
+            "description": "Entidad de negocio: DocumentoOferta",
+            "status": "active",
+            "progress": 100
+        },
+        {
+            "id": "empresacontratista",
+            "name": "EmpresaContratista",
+            "description": "Entidad de negocio: EmpresaContratista",
+            "status": "active",
+            "progress": 100
+        },
+        {
+            "id": "empresaprincipal",
+            "name": "EmpresaPrincipal",
+            "description": "Entidad de negocio: EmpresaPrincipal",
+            "status": "active",
+            "progress": 100
+        },
+        {
+            "id": "formularioprecalificacion",
+            "name": "FormularioPrecalificacion",
+            "description": "Entidad de negocio: FormularioPrecalificacion",
+            "status": "active",
+            "progress": 100
+        },
+        {
+            "id": "leccionaprendida",
+            "name": "LeccionAprendida",
+            "description": "Entidad de negocio: LeccionAprendida",
+            "status": "active",
+            "progress": 100
+        },
+        {
+            "id": "licitacion",
+            "name": "Licitacion",
+            "description": "Entidad de negocio: Licitacion",
+            "status": "active",
+            "progress": 100
+        },
+        {
+            "id": "licitacioncontratistainvitado",
+            "name": "LicitacionContratistaInvitado",
+            "description": "Entidad de negocio: LicitacionContratistaInvitado",
+            "status": "active",
+            "progress": 100
+        },
+        {
+            "id": "notificacion",
+            "name": "Notificacion",
+            "description": "Entidad de negocio: Notificacion",
+            "status": "active",
+            "progress": 100
+        },
+        {
+            "id": "observacionlicitacion",
+            "name": "ObservacionLicitacion",
+            "description": "Entidad de negocio: ObservacionLicitacion",
+            "status": "active",
+            "progress": 100
+        },
+        {
+            "id": "oferta",
+            "name": "Oferta",
+            "description": "Entidad de negocio: Oferta",
+            "status": "active",
+            "progress": 100
+        },
+        {
+            "id": "precalificacioncontratista",
+            "name": "PrecalificacionContratista",
+            "description": "Entidad de negocio: PrecalificacionContratista",
+            "status": "active",
+            "progress": 100
+        },
+        {
+            "id": "requisitodocumentolicitacion",
+            "name": "RequisitoDocumentoLicitacion",
+            "description": "Entidad de negocio: RequisitoDocumentoLicitacion",
+            "status": "active",
+            "progress": 100
+        },
+        {
+            "id": "revisioncalidad",
+            "name": "RevisionCalidad",
+            "description": "Entidad de negocio: RevisionCalidad",
+            "status": "active",
+            "progress": 100
+        },
+        {
+            "id": "user",
+            "name": "User",
+            "description": "Entidad de negocio: User",
+            "status": "active",
+            "progress": 100
         }
     ]
 }

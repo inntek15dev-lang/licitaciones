@@ -1,3 +1,504 @@
 {
-    "modules": []
+    "modules": [
+        {
+            "id": "dashboard-admin",
+            "name": "Dashboard Admin",
+            "description": "Resumen ejecutivo con KPIs de cumplimiento, cantidad de contratistas, registros y evidencias",
+            "status": "completed",
+            "progress": 100,
+            "features": [
+                {
+                    "id": "kpi-cards",
+                    "name": "Tarjetas KPI",
+                    "status": "done",
+                    "files": [
+                        "app/Http/Controllers/Admin/DashboardController.php"
+                    ]
+                },
+                {
+                    "id": "recent-records",
+                    "name": "Registros Recientes",
+                    "status": "done",
+                    "files": [
+                        "resources/views/admin/dashboard.blade.php"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "dashboard-contratista",
+            "name": "Dashboard Contratista",
+            "description": "Vista de cumplimiento actual del contratista con comparación a meta del programa",
+            "status": "completed",
+            "progress": 100,
+            "features": [
+                {
+                    "id": "semaforo",
+                    "name": "Semáforo Visual",
+                    "status": "done",
+                    "files": []
+                },
+                {
+                    "id": "progreso-mensual",
+                    "name": "Progreso Mensual",
+                    "status": "done",
+                    "files": []
+                }
+            ]
+        },
+        {
+            "id": "gestion-registros",
+            "name": "Gestión de Registros",
+            "description": "Vista de todos los registros con filtros y ordenamiento por EECC, Dependencia y Periodo",
+            "status": "completed",
+            "progress": 100,
+            "features": [
+                {
+                    "id": "filtros",
+                    "name": "Filtros Dinámicos",
+                    "status": "done",
+                    "files": [
+                        "app/Http/Controllers/Admin/RegistroController.php"
+                    ]
+                },
+                {
+                    "id": "ordenamiento",
+                    "name": "Ordenamiento por Columnas",
+                    "status": "done",
+                    "files": []
+                },
+                {
+                    "id": "promedio-anual",
+                    "name": "Cálculo Promedio Anual",
+                    "status": "done",
+                    "files": []
+                }
+            ]
+        },
+        {
+            "id": "formulario-registro",
+            "name": "Formulario de Registro Mensual",
+            "description": "Formulario Livewire para completar registro mensual con evidencias múltiples",
+            "status": "completed",
+            "progress": 100,
+            "features": [
+                {
+                    "id": "evidencias-multiples",
+                    "name": "Hasta 4 Evidencias por Actividad",
+                    "status": "done",
+                    "files": [
+                        "app/Livewire/Contratista/FormularioRegistro.php"
+                    ]
+                },
+                {
+                    "id": "acumulacion-archivos",
+                    "name": "Acumulación de Archivos",
+                    "status": "done",
+                    "files": []
+                },
+                {
+                    "id": "calculo-cumplimiento",
+                    "name": "Cálculo Automático de Cumplimiento",
+                    "status": "done",
+                    "files": []
+                }
+            ]
+        },
+        {
+            "id": "gestion-evidencias",
+            "name": "Gestión de Evidencias",
+            "description": "Visualización y descarga de evidencias para Admin y Contratista",
+            "status": "completed",
+            "progress": 100,
+            "features": [
+                {
+                    "id": "ver-navegador",
+                    "name": "Ver en Navegador",
+                    "status": "done",
+                    "files": [
+                        "app/Http/Controllers/Admin/EvidenciaController.php"
+                    ]
+                },
+                {
+                    "id": "descargar",
+                    "name": "Descargar Archivo",
+                    "status": "done",
+                    "files": []
+                }
+            ]
+        },
+        {
+            "id": "elementos-actividades",
+            "name": "Elementos y Actividades",
+            "description": "Gestión de elementos del programa de seguridad y actividades asociadas",
+            "status": "completed",
+            "progress": 100,
+            "features": [
+                {
+                    "id": "crud-elementos",
+                    "name": "CRUD Elementos",
+                    "status": "done",
+                    "files": [
+                        "app/Http/Controllers/Admin/ElementoController.php"
+                    ]
+                },
+                {
+                    "id": "crud-actividades",
+                    "name": "CRUD Actividades",
+                    "status": "done",
+                    "files": [
+                        "app/Http/Controllers/Admin/ActividadController.php"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "gestion-dependencias",
+            "name": "Gestión de Dependencias",
+            "description": "CRUD de dependencias/plantas con layout de formulario y tabla",
+            "status": "completed",
+            "progress": 100,
+            "features": [
+                {
+                    "id": "crud-dependencias",
+                    "name": "CRUD Dependencias",
+                    "status": "done",
+                    "files": [
+                        "app/Http/Controllers/Admin/DependenciaController.php"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "configuracion",
+            "name": "Configuración del Sistema",
+            "description": "Parámetros globales del sistema como Meta del Programa",
+            "status": "completed",
+            "progress": 100,
+            "features": [
+                {
+                    "id": "meta-programa",
+                    "name": "Meta del Programa",
+                    "status": "done",
+                    "files": [
+                        "app/Models/Configuracion.php"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "reportes",
+            "name": "Reportes y Exportación",
+            "description": "Generación de reportes consolidados con exportación a Excel/PDF",
+            "status": "completed",
+            "progress": 100,
+            "features": [
+                {
+                    "id": "export-excel",
+                    "name": "Exportar Excel",
+                    "status": "done",
+                    "files": [
+                        "app/Http/Controllers/Admin/ReporteController.php"
+                    ]
+                },
+                {
+                    "id": "export-pdf",
+                    "name": "Exportar PDF",
+                    "status": "done",
+                    "files": []
+                }
+            ]
+        },
+        {
+            "id": "historial-contratista",
+            "name": "Historial del Contratista",
+            "description": "Vista de registros enviados por el contratista con seguimiento de desempeño",
+            "status": "completed",
+            "progress": 100,
+            "features": [
+                {
+                    "id": "lista-registros",
+                    "name": "Lista de Registros",
+                    "status": "done",
+                    "files": [
+                        "app/Http/Controllers/Contratista/HistorialController.php"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "autenticacion",
+            "name": "Autenticación y Roles",
+            "description": "Sistema de login con roles Admin y Contratista usando Laravel Breeze",
+            "status": "completed",
+            "progress": 100,
+            "features": [
+                {
+                    "id": "login",
+                    "name": "Login con Email/Password",
+                    "status": "done",
+                    "files": []
+                },
+                {
+                    "id": "roles",
+                    "name": "Middleware de Roles",
+                    "status": "done",
+                    "files": []
+                },
+                {
+                    "id": "navegacion-dinamica",
+                    "name": "Navegación por Rol",
+                    "status": "done",
+                    "files": [
+                        "resources/views/livewire/layout/navigation.blade.php"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "jerarquia-usuarios",
+            "name": "Jerarquía de Usuarios",
+            "description": "Usuarios operativos (usuario_contratista) con acceso restringido por servicio/dependencia",
+            "status": "completed",
+            "progress": 100,
+            "features": [
+                {
+                    "id": "usuario-operativo",
+                    "name": "Rol Usuario Contratista",
+                    "status": "done",
+                    "files": []
+                },
+                {
+                    "id": "parent-id",
+                    "name": "Vinculación Parent ID",
+                    "status": "done",
+                    "files": []
+                }
+            ]
+        },
+        {
+            "id": "solicitudes-reapertura",
+            "name": "Solicitudes de Reapertura",
+            "description": "Flujo para solicitar reapertura de registros auditados con aprobación y fecha límite",
+            "status": "completed",
+            "progress": 100,
+            "features": [
+                {
+                    "id": "crear-solicitud",
+                    "name": "Crear Solicitud",
+                    "status": "done",
+                    "files": [
+                        "app/Http/Controllers/Contratista/SolicitudReaperturaController.php"
+                    ]
+                },
+                {
+                    "id": "aprobar-rechazar",
+                    "name": "Aprobar/Rechazar",
+                    "status": "done",
+                    "files": [
+                        "app/Http/Controllers/Admin/SolicitudReaperturaController.php"
+                    ]
+                },
+                {
+                    "id": "emails",
+                    "name": "Notificaciones Email",
+                    "status": "done",
+                    "files": [
+                        "app/Mail/SolicitudReaperturaCreada.php"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "trazabilidad",
+            "name": "Trazabilidad de Registros",
+            "description": "Historial detallado de acciones sobre registros con exportación PDF",
+            "status": "completed",
+            "progress": 100,
+            "features": [
+                {
+                    "id": "registro-logs",
+                    "name": "Logs de Acciones",
+                    "status": "done",
+                    "files": [
+                        "app/Models/RegistroLog.php"
+                    ]
+                },
+                {
+                    "id": "export-pdf",
+                    "name": "Exportación PDF",
+                    "status": "done",
+                    "files": []
+                }
+            ]
+        },
+        {
+            "id": "auditoria",
+            "name": "Estados y Comentarios de Auditoría",
+            "description": "Sistema de estados de auditoría y comentarios de hallazgos",
+            "status": "completed",
+            "progress": 100,
+            "features": [
+                {
+                    "id": "estados",
+                    "name": "Estados de Auditoría",
+                    "status": "done",
+                    "files": []
+                },
+                {
+                    "id": "comentarios",
+                    "name": "Comentarios de Auditoría",
+                    "status": "done",
+                    "files": [
+                        "app/Models/AuditoriaComentario.php"
+                    ]
+                },
+                {
+                    "id": "subsanacion",
+                    "name": "Campo Subsanado_at",
+                    "status": "done",
+                    "files": []
+                }
+            ]
+        },
+        {
+            "id": "usuarios-activos",
+            "name": "Gestión de Usuarios Activos",
+            "description": "Activar/desactivar usuarios sin eliminarlos",
+            "status": "completed",
+            "progress": 100,
+            "features": [
+                {
+                    "id": "campo-activo",
+                    "name": "Campo Activo",
+                    "status": "done",
+                    "files": []
+                }
+            ]
+        },
+        {
+            "id": "reuniones-accountability",
+            "name": "Registro de Reuniones de Accountability",
+            "description": "Cargar y almacenar registros de reuniones mensuales entre contratistas y administradores",
+            "status": "pending",
+            "progress": 0,
+            "features": [
+                {
+                    "id": "adjuntar-docs",
+                    "name": "Adjuntar Documentos",
+                    "status": "todo",
+                    "files": []
+                },
+                {
+                    "id": "vincular-periodo",
+                    "name": "Vincular con Periodo",
+                    "status": "todo",
+                    "files": []
+                }
+            ]
+        },
+        {
+            "id": "acciones-correctivas",
+            "name": "Gestión de Acciones Correctivas",
+            "description": "Registrar acciones correctivas, asignar responsables y hacer seguimiento al cierre",
+            "status": "pending",
+            "progress": 0,
+            "features": [
+                {
+                    "id": "registrar-brechas",
+                    "name": "Registrar Brechas",
+                    "status": "todo",
+                    "files": []
+                },
+                {
+                    "id": "asignar-responsables",
+                    "name": "Asignar Responsables",
+                    "status": "todo",
+                    "files": []
+                },
+                {
+                    "id": "seguimiento",
+                    "name": "Seguimiento de Cierre",
+                    "status": "todo",
+                    "files": []
+                }
+            ]
+        },
+        {
+            "id": "conexion-acem",
+            "name": "Conexión con Base de Datos ACEM",
+            "description": "Integración para traer datos de empresas contratistas desde ACEM",
+            "status": "pending",
+            "progress": 0,
+            "features": [
+                {
+                    "id": "importar-empresas",
+                    "name": "Importar Empresas",
+                    "status": "todo",
+                    "files": []
+                },
+                {
+                    "id": "sincronizar",
+                    "name": "Sincronizar Datos",
+                    "status": "todo",
+                    "files": []
+                }
+            ]
+        },
+        {
+            "id": "carga-masiva",
+            "name": "Carga Masiva de Contratistas",
+            "description": "Herramienta para cargar múltiples contratistas desde Excel/CSV",
+            "status": "pending",
+            "progress": 0,
+            "features": [
+                {
+                    "id": "import-excel",
+                    "name": "Importar desde Excel",
+                    "status": "todo",
+                    "files": []
+                },
+                {
+                    "id": "import-acem",
+                    "name": "Importar desde ACEM",
+                    "status": "todo",
+                    "files": []
+                }
+            ]
+        },
+        {
+            "id": "generic-sync",
+            "name": "Sincronización Genérica (API)",
+            "description": "Módulo de integración para sincronizar datos desde APIs externas hacia la base de datos local",
+            "status": "completed",
+            "progress": 100,
+            "features": [
+                {
+                    "id": "config-wizard",
+                    "name": "Asistente de Configuración",
+                    "status": "done",
+                    "files": [
+                        "app/Http/Controllers/generic/ApiSyncController.php",
+                        "resources/views/generic/ApiSync/config.blade.php"
+                    ]
+                },
+                {
+                    "id": "sync-engine",
+                    "name": "Motor de Ejecución",
+                    "status": "done",
+                    "files": [
+                        "app/Models/ApiSyncConfig.php"
+                    ]
+                },
+                {
+                    "id": "preview-mode",
+                    "name": "Previsualización de Datos",
+                    "status": "done",
+                    "files": [
+                        "resources/views/generic/ApiSync/execute.blade.php"
+                    ]
+                }
+            ]
+        }
+    ]
 }

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<diagram type="flowchart" id="flow-auditoria" title="Flujo de Auditoría">
+  <metadata>
+    <description>Proceso de auditoría de registros por administrador de contrato</description>
+    <module>Estados de Auditoría</module>
+  </metadata>
+  <roles>
+    <role id="admin_contrato" name="Admin Contrato" color="#a855f7"/>
+    <role id="admin" name="Administrador" color="#ef4444"/>
+    <role id="sistema" name="Sistema" color="#3b82f6"/>
+  </roles>
+  <nodes>
+    <node id="start" type="start" x="300" y="30" label="Inicio" role="sistema"/>
+    <node id="select-registro" type="process" x="300" y="100" label="Seleccionar registro a auditar" role="admin_contrato"/>
+    <node id="change-state" type="process" x="300" y="170" label="Cambiar estado a 'Auditando'" role="admin_contrato"/>
+    <node id="review-activities" type="process" x="300" y="240" label="Revisar actividades" role="admin_contrato"/>
+    <node id="check-evidence" type="process" x="300" y="310" label="Verificar evidencias" role="admin_contrato"/>
+    <node id="add-comment" type="decision" x="300" y="390" label="¿Agregar comentario?" role="admin_contrato"/>
+    <node id="write-comment" type="process" x="150" y="470" label="Escribir comentario" role="admin_contrato"/>
+    <node id="audit-type" type="decision" x="300" y="550" label="Tipo de auditoría" role="admin_contrato"/>
+    <node id="audit-terreno" type="process" x="150" y="630" label="Marcar Auditoría Terreno" role="admin_contrato"/>
+    <node id="audit-sistema" type="process" x="450" y="630" label="Marcar Auditoría Sistema" role="admin_contrato"/>
+    <node id="save-audit" type="process" x="300" y="710" label="Guardar auditoría" role="sistema"/>
+    <node id="log-audit" type="process" x="300" y="780" label="Registrar en trazabilidad" role="sistema"/>
+    <node id="end" type="end" x="300" y="850" label="Fin" role="sistema"/>
+  </nodes>
+  <connections>
+    <connect from="start" to="select-registro"/>
+    <connect from="select-registro" to="change-state"/>
+    <connect from="change-state" to="review-activities"/>
+    <connect from="review-activities" to="check-evidence"/>
+    <connect from="check-evidence" to="add-comment"/>
+    <connect from="add-comment" to="write-comment" label="Sí"/>
+    <connect from="add-comment" to="audit-type" label="No"/>
+    <connect from="write-comment" to="audit-type"/>
+    <connect from="audit-type" to="audit-terreno" label="Terreno"/>
+    <connect from="audit-type" to="audit-sistema" label="Sistema"/>
+    <connect from="audit-terreno" to="save-audit"/>
+    <connect from="audit-sistema" to="save-audit"/>
+    <connect from="save-audit" to="log-audit"/>
+    <connect from="log-audit" to="end"/>
+  </connections>
+</diagram>

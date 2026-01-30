@@ -1,371 +1,151 @@
-// Documentation Viewer App
 class DocsApp {
     constructor() {
-        // Cache busting: Generate timestamp at app init to force fresh data load
-        this.cacheVersion = new Date().toISOString().replace(/[:.]/g, '-');
-        console.log(`📄 DocsApp initialized with cache version: ${this.cacheVersion}`);
-
-        this.data = {
-            project: null,
-            modules: null,
-            pending: null,
-            changelog: null,
-            kanban: null,
-            rules: null,
-            usecases: null
-        };
-        this.currentFilter = 'all';
-        this.flowRenderer = null;
-        this.usecaseRenderer = null;
+        this.cacheVersion = new Date().getTime(); // Cache buster
+        this.data = {};
         this.init();
     }
 
-    /**
-     * Generate URL with cache busting parameter
-     * @param {string} path - The data file path (e.g., 'data/project.json')
-     * @returns {string} URL with ?v=timestamp parameter
-     */
-    dataUrl(path) {
-        return `${path}?v=${this.cacheVersion}`;
-    }
-
     async init() {
-        await this.loadData();
-        this.setupNavigation();
-        this.setupFilters();
-        // this.setupDiagramButtons(); // Removed: Now handled in render methods
-
-        this.renderExecutive();
-        this.renderKanban();
-        this.renderModules();
-        this.renderERDiagram();
-        this.renderRules();
-        this.renderUseCases();
-        this.renderChangelog();
-        this.renderDiagrams("flow");
-        this.renderDiagrams("usecase");
+        console.log('🚀 Initializing DocsApp with cache version:', this.cacheVersion);
+        await this.loadProjectData();
+        this.renderSidebar();
+        this.loadSection('executive'); // Default
     }
 
-    /**
-     * Render ER Diagram (fetch SVG and embed)
-     */
-    async renderERDiagram() {
-        if (!this.data.diagrams || !this.data.diagrams.er) return;
-
-        const erList = this.data.diagrams.er;
-        const container = document.getElementById('er-container');
-
-        if (!container || erList.length === 0) {
-            if (container) container.innerHTML = '<span class="text-muted">No ER diagram available</span>';
-            return;
-        }
-
-        try {
-            const response = await fetch(this.dataUrl(erList[0].path));
-            const svgText = await response.text();
-            container.innerHTML = svgText;
-
-            // Make SVG responsive
-            const svg = container.querySelector('svg');
-            if (svg) {
-                svg.style.maxWidth = '100%';
-                svg.style.height = 'auto';
-            }
-        } catch (error) {
-            console.error('Error loading ER diagram:', error);
-            container.innerHTML = '<span class="text-muted">Error cargando diagrama ER</span>';
-        }
+    dataUrl(path) {
+        return `data/${path}?v=${this.cacheVersion}`;
     }
 
-    async loadData() {
+    async loadProjectData() {
         try {
-            // All data files loaded with cache busting parameter
-            const [project, modules, pending, changelog, kanban, rules, diagrams, usecases] = await Promise.all([
-                fetch(this.dataUrl('data/project.json')).then(r => r.json().catch(() => null)),
-                fetch(this.dataUrl('data/modules.json')).then(r => r.json().catch(() => ({ modules: [] }))),
-                fetch(this.dataUrl('data/pending.json')).then(r => r.json().catch(() => ({ items: [] }))),
-                fetch(this.dataUrl('data/changelog.json')).then(r => r.json().catch(() => ({ entries: [] }))),
-                fetch(this.dataUrl('data/kanban.json')).then(r => r.json().catch(() => ({ columns: [] }))),
-                fetch(this.dataUrl('data/rules.json')).then(r => r.json().catch(() => ({ rules: [] }))),
-                fetch(this.dataUrl('data/diagrams.json')).then(r => r.json().catch(() => ({ flow: [], usecase: [], er: [] }))),
-                fetch(this.dataUrl('data/usecases.json')).then(r => r.json().catch(() => ({ usecases: [] })))
+            const [proj, mods, skills, diagrams] = await Promise.all([
+                fetch(this.dataUrl('project.json')).then(r => r.json()),
+                fetch(this.dataUrl('modules.json')).then(r => r.json()),
+                fetch(this.dataUrl('skills.json')).then(r => r.json()),
+                fetch(this.dataUrl('diagrams.json')).then(r => r.json())
             ]);
-
-            this.data = { project, modules, pending, changelog, kanban, rules, diagrams, usecases };
-            console.log(`✅ Data loaded with cache version: ${this.cacheVersion}`);
-        } catch (error) {
-            console.error('Error loading data:', error);
+            this.data = { project: proj, modules: mods.modules, skills: skills, diagrams: diagrams };
+            document.title = `${proj.name} - Docs`;
+            document.getElementById('last-updated').textContent = `Actualizado: ${proj.lastUpdated}`;
+        } catch (e) {
+            console.error("Error loading data", e);
+            document.getElementById('content-area').innerHTML = `<div class="card"><h2>Error Loading Data</h2><p>${e.message}</p></div>`;
         }
     }
 
-    setupNavigation() {
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', (e) => {
-                e.preventDefault();
-                const section = item.dataset.section;
+    renderSidebar() {
+        const menu = document.getElementById('nav-menu');
+        const items = [
+            { id: 'executive', icon: '📈', label: 'Resumen Gerencial' },
+            { id: 'modules', icon: '📦', label: 'Módulos' },
+            { id: 'skills', icon: '🤖', label: 'Skills & Automation' },
+            { id: 'diagrams', icon: '🔀', label: 'Diagramas de Flujo' }
+        ];
 
-                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-                item.classList.add('active');
-
-                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-                document.getElementById(section).classList.add('active');
-            });
-        });
+        menu.innerHTML = items.map(item => 
+            `<div class="nav-item" onclick="app.loadSection('${item.id}')">
+                <span>${item.icon}</span> ${item.label}
+            </div>`
+        ).join('');
     }
 
-    setupFilters() {
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                this.currentFilter = btn.dataset.filter;
-                this.renderModules();
-            });
-        });
+    loadSection(id) {
+        const area = document.getElementById('content-area');
+        document.getElementById('page-title').textContent = id.toUpperCase();
+        
+        if (id === 'executive') this.renderExecutive(area);
+        if (id === 'modules') this.renderModules(area);
+        if (id === 'skills') this.renderSkills(area);
+        if (id === 'diagrams') this.renderDiagramsList(area);
     }
 
-    renderExecutive() {
-        if (!this.data.project) return;
-        const { project, modules } = this.data;
-
-        // Dynamic Title & Headers
-        document.title = `${project.name} - Documentación`;
-        document.getElementById('app-title').textContent = project.name;
-        document.getElementById('version').textContent = `v${project.version}`;
-        document.getElementById('project-description').textContent = project.description;
-        document.getElementById('last-updated').textContent = new Date(project.lastUpdated).toLocaleDateString('es-CL');
-
-        if (modules && modules.modules) {
-            const modulesList = modules.modules;
-            // Stats
-            const totalModules = modulesList.length;
-            const completedModules = modulesList.filter(m => m.status === 'completed').length;
-            const pendingModules = modulesList.filter(m => m.status === 'pending').length;
-            const progressPercent = totalModules > 0 ? Math.round((completedModules / totalModules) * 100) : 0;
-
-            document.getElementById('total-modules').textContent = totalModules;
-            document.getElementById('completed-modules').textContent = completedModules;
-            document.getElementById('pending-modules').textContent = pendingModules;
-            document.getElementById('progress-percent').textContent = `${progressPercent}%`;
-            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
-        }
-
-        // ... pending decisions and stack render logic remains same ...
-        // Stack
-        const stackGrid = document.getElementById('stack-grid');
-        if (project.stack && stackGrid) {
-            stackGrid.innerHTML = Object.entries(project.stack).map(([name, version]) => `
-                <div class="stack-item">
-                    <span class="name">${this.capitalize(name)}</span>
-                    <span class="version-tag">${version}</span>
+    renderExecutive(area) {
+        area.innerHTML = `
+            <div class="card">
+                <h2>${this.data.project.name}</h2>
+                <p>${this.data.project.description}</p>
+                <div class="grid">
+                    <div class="card"><h3>Módulos</h3><p>${this.data.modules.length}</p></div>
+                    <div class="card"><h3>Skills</h3><p>${this.data.skills.total_skills}</p></div>
                 </div>
-            `).join('');
-        }
+            </div>`;
     }
 
-    renderDiagrams(type) {
-        if (!this.data.diagrams) return;
+    renderModules(area) {
+        area.innerHTML = `<div class="grid">
+            ${this.data.modules.map(m => `
+                <div class="card">
+                    <h3>${m.name}</h3>
+                    <p>${m.description}</p>
+                    <span class="badge ${m.status}">${m.status}</span>
+                </div>
+            `).join('')}
+        </div>`;
+    }
 
-        const list = this.data.diagrams[type] || [];
-        const selectorId = type === 'flow' ? 'flow-selector' : 'usecase-selector';
-        const canvasId = type === 'flow' ? 'flow-canvas' : 'usecase-canvas';
-        const container = document.getElementById(selectorId);
+    renderSkills(area) {
+        area.innerHTML = `<div class="grid">
+            ${this.data.skills.skills.map(s => `
+                <div class="card">
+                    <h3>${s.name}</h3>
+                    <p>${s.description}</p>
+                    <code style="display:block;margin-top:10px;background:#eee;padding:5px;">${s.path}</code>
+                </div>
+            `).join('')}
+        </div>`;
+    }
 
-        if (!container) return;
-        container.innerHTML = '';
+    renderDiagramsList(area) {
+        area.innerHTML = `<div class="grid">
+            ${this.data.diagrams.flow.map(d => `
+                <div class="card pointer" onclick="app.renderFlowDiagram('${d.file}')">
+                    <h3>${d.title}</h3>
+                    <p>Role: ${d.role}</p>
+                </div>
+            `).join('')}
+        </div><div id="diagram-view"></div>`;
+    }
 
-        if (list.length === 0) {
-            container.innerHTML = '<span class="text-muted">No diagrams available</span>';
-            return;
-        }
+    async renderFlowDiagram(file) {
+        const area = document.getElementById('diagram-view');
+        area.innerHTML = '<div class="card"><h3>Cargando Diagrama...</h3></div>';
+        try {
+            // Fetch raw XML (cache busted)
+            const xmlUrl = this.dataUrl(`diagrams/${file}`);
+            const xml = await fetch(xmlUrl).then(r => r.text()); // Pure XML fetch logic here is fine for renderer
 
-        let renderer = null;
-        const canvas = document.getElementById(canvasId);
-        if (canvas) {
-            renderer = new DiagramRenderer(canvas);
-        }
+            // Create Canvas Container
+            area.innerHTML = `
+                <div class="card">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                        <h3>Visualización: ${file}</h3>
+                        <button onclick="app.loadSection('diagrams')" style="padding:5px 10px;cursor:pointer;">⬅ Volver</button>
+                    </div>
+                    <div class="diagram-container" style="overflow:auto;background:#1e293b;border-radius:8px;">
+                        <canvas id="flowCanvas" width="800" height="600"></canvas>
+                    </div>
+                    <p style="margin-top:10px;font-size:0.9em;color:#666;">💡 Arrastra los nodos para reorganizar.</p>
+                </div>`;
 
-        // Store reference to this for closure
-        const self = this;
+            // Initialize Renderer
+            const canvas = document.getElementById('flowCanvas');
+            // Auto resize canvas to fit container width if needed, or keep fixed
+            canvas.width = area.offsetWidth - 60; // Approximate padding adjustment
+            if (canvas.width < 600) canvas.width = 600;
 
-        list.forEach((diagram, index) => {
-            const btn = document.createElement('button');
-            btn.className = `diagram-btn ${index === 0 ? 'active' : ''}`;
-            btn.textContent = diagram.title;
-            btn.addEventListener('click', () => {
-                container.querySelectorAll('.diagram-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                // Cache busting for diagram XML files
-                if (renderer) renderer.loadAndRender(self.dataUrl(diagram.path));
-            });
-            container.appendChild(btn);
-
-            // Auto load first with cache busting
-            if (index === 0 && renderer) {
-                renderer.loadAndRender(self.dataUrl(diagram.path));
+            if (window.DiagramRenderer) {
+                const renderer = new window.DiagramRenderer(canvas);
+                await renderer.loadAndRender(xmlUrl);
+            } else {
+                area.innerHTML += `<p style="color:red">Error: DiagramRenderer not loaded.</p>`;
             }
-        });
-    }
 
-    // ... renderKanban, renderModules, renderRules, renderChangelog, helpers remain same ...
-
-
-    renderKanban() {
-        if (!this.data.kanban || !this.data.kanban.columns) return;
-
-        const board = document.getElementById('kanban-board');
-        const { columns } = this.data.kanban;
-
-        board.innerHTML = columns.map(column => `
-            <div class="kanban-column">
-                <div class="kanban-header">
-                    <h3>${column.title}</h3>
-                    <span class="kanban-count">${column.items.length}</span>
-                </div>
-                <div class="kanban-items">
-                    ${column.items.map(item => `
-                        <div class="kanban-card ${item.priority || ''}">
-                            <h4>${item.title}</h4>
-                            <p>${item.description}</p>
-                            <div class="kanban-meta">
-                                ${item.version ? `<span class="kanban-tag">v${item.version}</span>` : ''}
-                                ${item.priority ? `<span class="kanban-tag">${item.priority}</span>` : ''}
-                                ${item.requestedBy ? `<span class="kanban-tag">Por: ${item.requestedBy}</span>` : ''}
-                                ${item.awaitingFrom ? `<span class="kanban-tag">Espera: ${item.awaitingFrom}</span>` : ''}
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `).join('');
-    }
-
-    renderModules() {
-        if (!this.data.modules) return;
-
-        const grid = document.getElementById('modules-grid');
-        let modules = this.data.modules.modules;
-
-        if (this.currentFilter !== 'all') {
-            modules = modules.filter(m => m.status === this.currentFilter);
+        } catch(e) { 
+            console.error(e);
+            area.innerHTML = `<div class="card"><h3 style="color:red">Error cargando diagrama</h3><p>${e.message}</p></div>`; 
         }
-
-        grid.innerHTML = modules.map(module => `
-            <div class="module-card ${module.status}">
-                <div class="module-header">
-                    <h4>${module.name}</h4>
-                    <span class="status-badge ${module.status}">${this.getStatusLabel(module.status)}</span>
-                </div>
-                <p class="module-description">${module.description}</p>
-                <div class="module-progress">
-                    <div class="module-progress-bar" style="width: ${module.progress}%"></div>
-                </div>
-                <div class="module-features">
-                    ${module.features.slice(0, 4).map(f => `
-                        <span class="feature-tag ${f.status}">${f.name}</span>
-                    `).join('')}
-                    ${module.features.length > 4 ? `<span class="feature-tag">+${module.features.length - 4} más</span>` : ''}
-                </div>
-            </div>
-        `).join('');
-    }
-
-    renderRules() {
-        console.log('Rendering rules:', this.data.rules); // DEBUG
-        if (!this.data.rules || !this.data.rules.rules) {
-            console.warn('Rules data missing', this.data);
-            return;
-        }
-
-        const tbody = document.getElementById('rules-table-body');
-        if (!tbody) {
-            console.error('Tbody not found');
-            return;
-        }
-        tbody.innerHTML = this.data.rules.rules.map(rule => `
-            <tr>
-                <td class="rule-id">${rule.id}</td>
-                <td class="rule-title">${rule.title}</td>
-                <td>${rule.description}</td>
-                <td><span class="rule-type ${rule.type}">${this.capitalize(rule.type)}</span></td>
-                <td><span class="module-tag">${rule.module_id}</span></td>
-            </tr>
-        `).join('');
-    }
-
-    renderUseCases() {
-        if (!this.data.usecases || !this.data.usecases.usecases) {
-            console.warn('Use cases data missing');
-            return;
-        }
-
-        const container = document.getElementById('usecases-list');
-        if (!container) {
-            console.error('Use cases container not found');
-            return;
-        }
-
-        const usecases = this.data.usecases.usecases;
-
-        // Group by actor
-        const byActor = usecases.reduce((acc, uc) => {
-            const actor = uc.actor || 'Sin Actor';
-            if (!acc[actor]) acc[actor] = [];
-            acc[actor].push(uc);
-            return acc;
-        }, {});
-
-        container.innerHTML = Object.entries(byActor).map(([actor, cases]) => `
-            <div class="usecase-group">
-                <h3 class="usecase-actor">👤 ${actor}</h3>
-                <div class="usecase-cards">
-                    ${cases.map(uc => `
-                        <div class="usecase-card">
-                            <span class="usecase-id">${uc.id}</span>
-                            <h4>${uc.title}</h4>
-                            <p>${uc.description}</p>
-                            <span class="module-tag">${uc.module_id}</span>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `).join('');
-    }
-
-    renderChangelog() {
-        if (!this.data.changelog || !this.data.changelog.entries) return;
-
-        const timeline = document.getElementById('changelog-timeline');
-        const entries = [...this.data.changelog.entries].reverse();
-
-        timeline.innerHTML = entries.map(entry => `
-            <div class="timeline-item ${entry.type}">
-                <div class="timeline-header">
-                    <span class="timeline-version">v${entry.version}</span>
-                    <span class="timeline-date">${new Date(entry.date).toLocaleDateString('es-CL')}</span>
-                </div>
-                <div class="timeline-content">
-                    <p>${entry.description}</p>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    getStatusLabel(status) {
-        const labels = {
-            'completed': 'Completado',
-            'in-progress': 'En Progreso',
-            'pending': 'Pendiente'
-        };
-        return labels[status] || status;
-    }
-
-    capitalize(str) {
-        return str.charAt(0).toUpperCase() + str.slice(1);
     }
 }
 
-// Initialize app
-document.addEventListener('DOMContentLoaded', () => {
-    new DocsApp();
-});
+const app = new DocsApp();
+window.app = app;

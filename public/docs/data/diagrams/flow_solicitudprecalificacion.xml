@@ -1,0 +1,16 @@
+<diagram type="flowchart" id="SolicitudPrecalificacion">
+  <metadata>
+    <description>Flow for SolicitudPrecalificacion</description>
+    <role>contratista</role>
+  </metadata>
+  <nodes>
+    <node id="mount" type="process" x="200" y="50" label="mount" role="contratista" color="#22c55e"/>
+    <node id="addDocumento" type="process" x="200" y="130" label="addDocumento" role="contratista" color="#22c55e"/>
+    <node id="removeDocumento" type="process" x="200" y="210" label="removeDocumento" role="contratista" color="#22c55e"/>
+    <node id="enviarSolicitud" type="process" x="200" y="290" label="enviarSolicitud" role="contratista" color="#22c55e"/>
+    <node id="mostrarFormRectificacion" type="process" x="200" y="370" label="mostrarFormRectificacion" role="contratista" color="#22c55e"/>
+    <node id="enviarRectificacion" type="process" x="200" y="450" label="enviarRectificacion" role="contratista" color="#22c55e"/>
+    <node id="render" type="process" x="200" y="530" label="render" role="contratista" color="#22c55e"/>
+
+  </nodes>
+</diagram>

@@ -7,10 +7,20 @@ class DiagramRenderer {
         this.ctx = canvas.getContext('2d');
         this.nodes = [];
         this.connections = [];
+        this.roles = {}; // Role definitions with colors
         this.isDragging = false;
         this.dragNode = null;
         this.dragOffset = { x: 0, y: 0 };
         this.currentType = null;
+        this.showRoles = true; // Toggle role display
+
+        // Default role colors
+        this.defaultRoleColors = {
+            'sistema': '#3b82f6',
+            'contratista': '#22c55e',
+            'admin': '#ef4444',
+            'admin_contrato': '#a855f7'
+        };
 
         this.setupInteraction();
     }
@@ -43,16 +53,11 @@ class DiagramRenderer {
     parseDiagram(xmlDoc) {
         this.nodes = [];
         this.connections = [];
+        this.roles = {};
 
-        // Detection: Check if it's mxGraph format (draw.io)
-        const mxfile = xmlDoc.querySelector('mxfile');
-        if (mxfile) {
-            this.currentType = 'mxgraph';
-            this.parseMxGraph(xmlDoc);
-            return;
-        }
+        // Parse roles first
+        this.parseRoles(xmlDoc);
 
-        // Otherwise use our custom format
         switch (this.currentType) {
             case 'flowchart':
                 this.parseFlowchart(xmlDoc);
@@ -66,62 +71,12 @@ class DiagramRenderer {
         }
     }
 
-    /**
-     * Parse draw.io / mxGraph format XML
-     */
-    parseMxGraph(xmlDoc) {
-        const cells = xmlDoc.querySelectorAll('mxCell');
-
-        cells.forEach(cell => {
-            const id = cell.getAttribute('id');
-            const value = cell.getAttribute('value');
-            const style = cell.getAttribute('style') || '';
-            const geometry = cell.querySelector('mxGeometry');
-
-            // Skip root cells (id=0, id=1)
-            if (id === '0' || id === '1') return;
-
-            // Check if it's an edge (connection)
-            if (cell.getAttribute('edge') === '1') {
-                this.connections.push({
-                    from: cell.getAttribute('source'),
-                    to: cell.getAttribute('target'),
-                    label: value || ''
-                });
-                return;
-            }
-
-            // Check if it's a vertex (node)
-            if (geometry && (style.includes('swimlane') || cell.getAttribute('vertex') === '1')) {
-                const x = parseFloat(geometry.getAttribute('x')) || 0;
-                const y = parseFloat(geometry.getAttribute('y')) || 0;
-                const width = parseFloat(geometry.getAttribute('width')) || 100;
-                const height = parseFloat(geometry.getAttribute('height')) || 50;
-
-                // Clean up value (remove HTML entities)
-                let label = (value || id).replace(/&amp;#xa;/g, ' ').replace(/🔑|🔗/g, '').substring(0, 30);
-
-                // Determine color from style
-                let color = '#3b82f6';
-                if (style.includes('fillColor=#d5e8d4')) color = '#22c55e';
-                else if (style.includes('fillColor=#dae8fc')) color = '#3b82f6';
-                else if (style.includes('fillColor=#fff2cc')) color = '#eab308';
-                else if (style.includes('fillColor=#e1d5e7')) color = '#a855f7';
-                else if (style.includes('fillColor=#ffe6cc')) color = '#f97316';
-                else if (style.includes('fillColor=#f8cecc')) color = '#ef4444';
-                else if (style.includes('fillColor=#b1ddf0')) color = '#06b6d4';
-
-                this.nodes.push({
-                    id,
-                    type: style.includes('swimlane') ? 'entity' : 'attribute',
-                    x: x + width / 2,  // Center coordinates
-                    y: y + height / 2,
-                    label: label.trim(),
-                    width,
-                    height,
-                    color
-                });
-            }
+    parseRoles(xmlDoc) {
+        xmlDoc.querySelectorAll('roles > role').forEach(r => {
+            this.roles[r.getAttribute('id')] = {
+                name: r.getAttribute('name'),
+                color: r.getAttribute('color') || this.defaultRoleColors[r.getAttribute('id')] || '#64748b'
+            };
         });
     }
 
@@ -156,9 +111,6 @@ class DiagramRenderer {
                 case 'usecase':
                     if (node.type === 'actor') this.drawActor(node);
                     else this.drawUseCaseNode(node);
-                    break;
-                case 'mxgraph':
-                    this.drawMxGraphNode(node);
                     break;
             }
         });
@@ -228,6 +180,7 @@ class DiagramRenderer {
                 x: parseInt(n.getAttribute('x')),
                 y: parseInt(n.getAttribute('y')),
                 label: n.getAttribute('label'),
+                role: n.getAttribute('role') || null,
                 width: n.getAttribute('type') === 'process' ? 140 : 100,
                 height: 50
             });
@@ -250,6 +203,7 @@ class DiagramRenderer {
                 y: parseInt(s.getAttribute('y')),
                 label: s.getAttribute('label'),
                 color: s.getAttribute('color'),
+                role: s.getAttribute('role') || null,
                 width: 100,
                 height: 40
             });
@@ -258,7 +212,8 @@ class DiagramRenderer {
             this.connections.push({
                 from: t.getAttribute('from'),
                 to: t.getAttribute('to'),
-                label: t.getAttribute('label') || ''
+                label: t.getAttribute('label') || '',
+                actor: t.getAttribute('actor') || null
             });
         });
     }
@@ -300,6 +255,11 @@ class DiagramRenderer {
         this.ctx.fillStyle = '#1e293b';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
+        // Draw roles legend if roles are defined
+        if (this.showRoles && Object.keys(this.roles).length > 0) {
+            this.drawRolesLegend();
+        }
+
         // Draw system boundary for Use Case
         if (this.currentType === 'usecase') {
             this.ctx.save();
@@ -312,17 +272,53 @@ class DiagramRenderer {
             this.ctx.fillStyle = '#94a3b8';
             this.ctx.font = '14px Segoe UI';
             this.ctx.textAlign = 'center';
-            this.ctx.fillText('Sistema', 305, 20);
+            this.ctx.fillText('Sistema OIEM', 305, 20);
             this.ctx.restore();
         }
+    }
 
-        // Draw title for mxGraph diagrams
-        if (this.currentType === 'mxgraph') {
-            this.ctx.fillStyle = '#94a3b8';
-            this.ctx.font = '12px Segoe UI';
-            this.ctx.textAlign = 'left';
-            this.ctx.fillText('Diagrama ER (Escalado)', 10, 20);
-        }
+    drawRolesLegend() {
+        const ctx = this.ctx;
+        ctx.save();
+
+        const legendX = 520;
+        const legendY = 20;
+        const roleCount = Object.keys(this.roles).length;
+        const legendHeight = roleCount * 25 + 30;
+
+        // Legend background
+        ctx.fillStyle = 'rgba(30, 41, 59, 0.95)';
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(legendX, legendY, 160, legendHeight, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        // Legend title
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = 'bold 11px Segoe UI';
+        ctx.textAlign = 'left';
+        ctx.fillText('👤 ROLES / ACTORES', legendX + 10, legendY + 18);
+
+        // Role items
+        let yOffset = 40;
+        Object.entries(this.roles).forEach(([id, role]) => {
+            // Color indicator
+            ctx.fillStyle = role.color;
+            ctx.beginPath();
+            ctx.arc(legendX + 18, legendY + yOffset - 4, 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Role name
+            ctx.fillStyle = '#e2e8f0';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText(role.name, legendX + 30, legendY + yOffset);
+
+            yOffset += 25;
+        });
+
+        ctx.restore();
     }
 
     renderError(message) {
@@ -340,8 +336,11 @@ class DiagramRenderer {
     // --- Specific Drawing Methods ---
 
     drawFlowchartNode(node) {
-        const { type, x, y, label } = node;
+        const { type, x, y, label, role } = node;
         this.ctx.save();
+
+        // Get role color if available
+        const roleColor = role && this.roles[role] ? this.roles[role].color : null;
 
         switch (type) {
             case 'start':
@@ -355,13 +354,19 @@ class DiagramRenderer {
                 this.ctx.stroke();
                 break;
             case 'process':
-                this.ctx.fillStyle = '#3b82f6';
+                // Use role color for processes
+                this.ctx.fillStyle = roleColor || '#3b82f6';
                 this.ctx.beginPath();
                 this.ctx.roundRect(x - 70, y - 20, 140, 40, 8);
                 this.ctx.fill();
-                this.ctx.strokeStyle = '#60a5fa';
+                this.ctx.strokeStyle = this.lightenColor(roleColor || '#3b82f6', 30);
                 this.ctx.lineWidth = 2;
                 this.ctx.stroke();
+
+                // Draw role indicator dot
+                if (role && this.showRoles) {
+                    this.drawRoleIndicator(x + 60, y - 15, roleColor);
+                }
                 break;
             case 'decision':
                 this.ctx.beginPath();
@@ -370,11 +375,17 @@ class DiagramRenderer {
                 this.ctx.lineTo(x, y + 30);
                 this.ctx.lineTo(x - 50, y);
                 this.ctx.closePath();
-                this.ctx.fillStyle = '#eab308';
+                // Use role color for decisions too
+                this.ctx.fillStyle = roleColor || '#eab308';
                 this.ctx.fill();
-                this.ctx.strokeStyle = '#fbbf24';
+                this.ctx.strokeStyle = this.lightenColor(roleColor || '#eab308', 30);
                 this.ctx.lineWidth = 2;
                 this.ctx.stroke();
+
+                // Draw role indicator dot
+                if (role && this.showRoles) {
+                    this.drawRoleIndicator(x + 45, y - 25, roleColor);
+                }
                 break;
         }
 
@@ -382,8 +393,31 @@ class DiagramRenderer {
         this.ctx.restore();
     }
 
+    drawRoleIndicator(x, y, color) {
+        this.ctx.save();
+        this.ctx.beginPath();
+        this.ctx.arc(x, y, 5, 0, Math.PI * 2);
+        this.ctx.fillStyle = '#1e293b';
+        this.ctx.fill();
+        this.ctx.beginPath();
+        this.ctx.arc(x, y, 4, 0, Math.PI * 2);
+        this.ctx.fillStyle = color || '#64748b';
+        this.ctx.fill();
+        this.ctx.restore();
+    }
+
+    lightenColor(color, percent) {
+        // Simple color lightening
+        const num = parseInt(color.replace('#', ''), 16);
+        const amt = Math.round(2.55 * percent);
+        const R = Math.min(255, (num >> 16) + amt);
+        const G = Math.min(255, ((num >> 8) & 0x00FF) + amt);
+        const B = Math.min(255, (num & 0x0000FF) + amt);
+        return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+    }
+
     drawLifecycleNode(node) {
-        const { x, y, label, color } = node;
+        const { x, y, label, color, role } = node;
         this.ctx.save();
         this.ctx.fillStyle = color || '#3b82f6';
         this.ctx.beginPath();
@@ -393,43 +427,20 @@ class DiagramRenderer {
         this.ctx.lineWidth = 1;
         this.ctx.stroke();
 
-        this.drawLabel(x, y, label);
-        this.ctx.restore();
-    }
-
-    /**
-     * Draw mxGraph/draw.io entity node with scaling
-     */
-    drawMxGraphNode(node) {
-        const { x, y, label, width, height, color, type } = node;
-
-        // Apply scaling for large diagrams
-        const scale = this.scale || 0.35;
-        const sx = x * scale;
-        const sy = y * scale;
-        const sw = width * scale;
-        const sh = Math.min(height * scale, 30); // Cap height for readability
-
-        this.ctx.save();
-
-        // Only draw swimlane (entity) nodes, skip attribute detail cells
-        if (type === 'entity') {
-            this.ctx.fillStyle = color || '#3b82f6';
+        // Draw role indicator for lifecycle states
+        if (role && this.showRoles && this.roles[role]) {
+            const roleColor = this.roles[role].color;
             this.ctx.beginPath();
-            this.ctx.roundRect(sx - sw / 2, sy - sh / 2, sw, sh, 4);
+            this.ctx.arc(x + 45, y - 15, 6, 0, Math.PI * 2);
+            this.ctx.fillStyle = '#1e293b';
             this.ctx.fill();
-            this.ctx.strokeStyle = '#fff';
-            this.ctx.lineWidth = 1;
-            this.ctx.stroke();
-
-            // Label
-            this.ctx.fillStyle = '#fff';
-            this.ctx.font = '10px Segoe UI';
-            this.ctx.textAlign = 'center';
-            this.ctx.textBaseline = 'middle';
-            this.ctx.fillText(label, sx, sy);
+            this.ctx.beginPath();
+            this.ctx.arc(x + 45, y - 15, 5, 0, Math.PI * 2);
+            this.ctx.fillStyle = roleColor;
+            this.ctx.fill();
         }
 
+        this.drawLabel(x, y, label);
         this.ctx.restore();
     }
 

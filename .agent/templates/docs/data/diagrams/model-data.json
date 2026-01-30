@@ -1,0 +1,1133 @@
+{
+    "generated_at": "2026-01-28T15:46:00-03:00",
+    "source": ".agent/BD/schema_base.sql",
+    "version": "1.0",
+    "tables": [
+        {
+            "name": "roles",
+            "description": "Roles del sistema (admin, administrador_contrato, contratista, usuario_contratista)",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "BIGINT UNSIGNED",
+                    "primary": true
+                },
+                {
+                    "name": "name",
+                    "type": "VARCHAR(255)",
+                    "nullable": false
+                },
+                {
+                    "name": "guard_name",
+                    "type": "VARCHAR(255)",
+                    "nullable": false
+                }
+            ],
+            "relationships": []
+        },
+        {
+            "name": "dependencias",
+            "description": "Catálogo de dependencias/plantas",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "BIGINT UNSIGNED",
+                    "primary": true
+                },
+                {
+                    "name": "nombre",
+                    "type": "VARCHAR(255)",
+                    "nullable": false
+                },
+                {
+                    "name": "activo",
+                    "type": "TINYINT(1)",
+                    "nullable": false
+                }
+            ],
+            "relationships": []
+        },
+        {
+            "name": "tipos_contratista",
+            "description": "Tipos de servicios de contratista (Granel, Envasado, etc.)",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "BIGINT UNSIGNED",
+                    "primary": true
+                },
+                {
+                    "name": "nombre",
+                    "type": "VARCHAR(255)",
+                    "nullable": false
+                },
+                {
+                    "name": "descripcion",
+                    "type": "TEXT",
+                    "nullable": true
+                },
+                {
+                    "name": "activo",
+                    "type": "TINYINT(1)",
+                    "nullable": false
+                }
+            ],
+            "relationships": []
+        },
+        {
+            "name": "programas",
+            "description": "Programas de seguridad (OIEM)",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "BIGINT UNSIGNED",
+                    "primary": true
+                },
+                {
+                    "name": "nombre",
+                    "type": "VARCHAR(255)",
+                    "nullable": false
+                },
+                {
+                    "name": "descripcion",
+                    "type": "TEXT",
+                    "nullable": true
+                },
+                {
+                    "name": "activo",
+                    "type": "TINYINT(1)",
+                    "nullable": false
+                }
+            ],
+            "relationships": []
+        },
+        {
+            "name": "users",
+            "description": "Usuarios del sistema (Admin/Contratista) con campo activo",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "BIGINT UNSIGNED",
+                    "primary": true
+                },
+                {
+                    "name": "name",
+                    "type": "VARCHAR(255)",
+                    "nullable": false
+                },
+                {
+                    "name": "email",
+                    "type": "VARCHAR(255)",
+                    "nullable": false,
+                    "unique": true
+                },
+                {
+                    "name": "password",
+                    "type": "VARCHAR(255)",
+                    "nullable": false
+                },
+                {
+                    "name": "role",
+                    "type": "VARCHAR(50)",
+                    "nullable": false
+                },
+                {
+                    "name": "parent_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": true,
+                    "fk": "users.id"
+                },
+                {
+                    "name": "tipo_contratista_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": true,
+                    "fk": "tipos_contratista.id"
+                },
+                {
+                    "name": "dependencia_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": true,
+                    "fk": "dependencias.id"
+                },
+                {
+                    "name": "eecc_nombre",
+                    "type": "VARCHAR(255)",
+                    "nullable": true
+                },
+                {
+                    "name": "rut",
+                    "type": "VARCHAR(20)",
+                    "nullable": true
+                },
+                {
+                    "name": "activo",
+                    "type": "TINYINT(1)",
+                    "nullable": false
+                }
+            ],
+            "relationships": [
+                {
+                    "type": "belongsTo",
+                    "target": "users",
+                    "fk": "parent_id",
+                    "alias": "parent"
+                },
+                {
+                    "type": "belongsTo",
+                    "target": "tipos_contratista",
+                    "fk": "tipo_contratista_id"
+                },
+                {
+                    "type": "belongsTo",
+                    "target": "dependencias",
+                    "fk": "dependencia_id"
+                },
+                {
+                    "type": "hasMany",
+                    "target": "registros",
+                    "fk": "user_id"
+                }
+            ]
+        },
+        {
+            "name": "elementos",
+            "description": "Elementos del programa de seguridad",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "BIGINT UNSIGNED",
+                    "primary": true
+                },
+                {
+                    "name": "programa_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": true,
+                    "fk": "programas.id"
+                },
+                {
+                    "name": "numero",
+                    "type": "VARCHAR(20)",
+                    "nullable": false
+                },
+                {
+                    "name": "nombre",
+                    "type": "VARCHAR(255)",
+                    "nullable": false
+                },
+                {
+                    "name": "descripcion",
+                    "type": "TEXT",
+                    "nullable": true
+                },
+                {
+                    "name": "orden",
+                    "type": "INT",
+                    "nullable": false
+                },
+                {
+                    "name": "activo",
+                    "type": "TINYINT(1)",
+                    "nullable": false
+                }
+            ],
+            "relationships": [
+                {
+                    "type": "belongsTo",
+                    "target": "programas",
+                    "fk": "programa_id"
+                },
+                {
+                    "type": "hasMany",
+                    "target": "actividades",
+                    "fk": "elemento_id"
+                }
+            ]
+        },
+        {
+            "name": "actividades",
+            "description": "Actividades por elemento",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "BIGINT UNSIGNED",
+                    "primary": true
+                },
+                {
+                    "name": "elemento_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": false,
+                    "fk": "elementos.id"
+                },
+                {
+                    "name": "codigo",
+                    "type": "VARCHAR(20)",
+                    "nullable": false
+                },
+                {
+                    "name": "descripcion",
+                    "type": "TEXT",
+                    "nullable": false
+                },
+                {
+                    "name": "criterios",
+                    "type": "TEXT",
+                    "nullable": true
+                },
+                {
+                    "name": "frecuencia",
+                    "type": "ENUM",
+                    "values": [
+                        "mensual",
+                        "trimestral",
+                        "semestral",
+                        "anual",
+                        "cuando_aplique"
+                    ]
+                },
+                {
+                    "name": "requiere_evidencia",
+                    "type": "TINYINT(1)",
+                    "nullable": false
+                },
+                {
+                    "name": "orden",
+                    "type": "INT",
+                    "nullable": false
+                },
+                {
+                    "name": "activo",
+                    "type": "TINYINT(1)",
+                    "nullable": false
+                }
+            ],
+            "relationships": [
+                {
+                    "type": "belongsTo",
+                    "target": "elementos",
+                    "fk": "elemento_id"
+                }
+            ]
+        },
+        {
+            "name": "contratista_asignaciones",
+            "description": "Vínculo Contratista-Servicio-Dependencia",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "BIGINT UNSIGNED",
+                    "primary": true
+                },
+                {
+                    "name": "user_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": false,
+                    "fk": "users.id"
+                },
+                {
+                    "name": "tipo_contratista_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": false,
+                    "fk": "tipos_contratista.id"
+                },
+                {
+                    "name": "dependencia_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": false,
+                    "fk": "dependencias.id"
+                },
+                {
+                    "name": "administrador_contrato_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": true,
+                    "fk": "users.id"
+                },
+                {
+                    "name": "periodo_inicio",
+                    "type": "DATE",
+                    "nullable": true
+                }
+            ],
+            "relationships": [
+                {
+                    "type": "belongsTo",
+                    "target": "users",
+                    "fk": "user_id",
+                    "alias": "contratista"
+                },
+                {
+                    "type": "belongsTo",
+                    "target": "tipos_contratista",
+                    "fk": "tipo_contratista_id"
+                },
+                {
+                    "type": "belongsTo",
+                    "target": "dependencias",
+                    "fk": "dependencia_id"
+                },
+                {
+                    "type": "belongsTo",
+                    "target": "users",
+                    "fk": "administrador_contrato_id",
+                    "alias": "administrador"
+                }
+            ]
+        },
+        {
+            "name": "registros",
+            "description": "Registros mensuales con estado_auditoria",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "BIGINT UNSIGNED",
+                    "primary": true
+                },
+                {
+                    "name": "user_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": false,
+                    "fk": "users.id"
+                },
+                {
+                    "name": "contratista_asignacion_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": true,
+                    "fk": "contratista_asignaciones.id"
+                },
+                {
+                    "name": "periodo",
+                    "type": "DATE",
+                    "nullable": false
+                },
+                {
+                    "name": "eecc_nombre",
+                    "type": "VARCHAR(255)",
+                    "nullable": true
+                },
+                {
+                    "name": "dependencia",
+                    "type": "VARCHAR(255)",
+                    "nullable": true
+                },
+                {
+                    "name": "personas_nuevas",
+                    "type": "INT",
+                    "nullable": false
+                },
+                {
+                    "name": "supervisores",
+                    "type": "INT",
+                    "nullable": false
+                },
+                {
+                    "name": "prevencionistas",
+                    "type": "INT",
+                    "nullable": false
+                },
+                {
+                    "name": "dotacion_total",
+                    "type": "INT",
+                    "nullable": false
+                },
+                {
+                    "name": "porcentaje_cumplimiento",
+                    "type": "DECIMAL(5,2)",
+                    "nullable": false
+                },
+                {
+                    "name": "porcentaje_cumplimiento_auditor",
+                    "type": "DECIMAL(5,2)",
+                    "nullable": true
+                },
+                {
+                    "name": "estado_auditoria",
+                    "type": "ENUM",
+                    "values": [
+                        "pendiente",
+                        "auditando",
+                        "auditada_terreno",
+                        "auditada_sistema",
+                        "reabierto"
+                    ]
+                },
+                {
+                    "name": "tipo_auditoria",
+                    "type": "ENUM",
+                    "values": [
+                        "sistema",
+                        "terreno"
+                    ],
+                    "nullable": true
+                },
+                {
+                    "name": "auditor_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": true,
+                    "fk": "users.id"
+                }
+            ],
+            "relationships": [
+                {
+                    "type": "belongsTo",
+                    "target": "users",
+                    "fk": "user_id"
+                },
+                {
+                    "type": "belongsTo",
+                    "target": "contratista_asignaciones",
+                    "fk": "contratista_asignacion_id"
+                },
+                {
+                    "type": "belongsTo",
+                    "target": "users",
+                    "fk": "auditor_id",
+                    "alias": "auditor"
+                },
+                {
+                    "type": "hasMany",
+                    "target": "registro_actividades",
+                    "fk": "registro_id"
+                },
+                {
+                    "type": "hasMany",
+                    "target": "registro_logs",
+                    "fk": "registro_id"
+                },
+                {
+                    "type": "hasMany",
+                    "target": "solicitudes_reapertura",
+                    "fk": "registro_id"
+                },
+                {
+                    "type": "hasMany",
+                    "target": "auditoria_comentarios",
+                    "fk": "registro_id"
+                },
+                {
+                    "type": "hasMany",
+                    "target": "hallazgos",
+                    "fk": "registro_id"
+                }
+            ]
+        },
+        {
+            "name": "registro_actividades",
+            "description": "Detalle con campo subsanado_at",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "BIGINT UNSIGNED",
+                    "primary": true
+                },
+                {
+                    "name": "registro_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": false,
+                    "fk": "registros.id"
+                },
+                {
+                    "name": "actividad_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": false,
+                    "fk": "actividades.id"
+                },
+                {
+                    "name": "cumple",
+                    "type": "TINYINT(1)",
+                    "nullable": true
+                },
+                {
+                    "name": "cumple_auditor",
+                    "type": "TINYINT(1)",
+                    "nullable": true
+                },
+                {
+                    "name": "responsable",
+                    "type": "VARCHAR(255)",
+                    "nullable": true
+                },
+                {
+                    "name": "descripcion_contratista",
+                    "type": "TEXT",
+                    "nullable": true
+                },
+                {
+                    "name": "observacion_auditor",
+                    "type": "TEXT",
+                    "nullable": true
+                },
+                {
+                    "name": "subsanado_at",
+                    "type": "TIMESTAMP",
+                    "nullable": true
+                }
+            ],
+            "relationships": [
+                {
+                    "type": "belongsTo",
+                    "target": "registros",
+                    "fk": "registro_id"
+                },
+                {
+                    "type": "belongsTo",
+                    "target": "actividades",
+                    "fk": "actividad_id"
+                },
+                {
+                    "type": "hasMany",
+                    "target": "evidencias",
+                    "fk": "registro_actividad_id"
+                }
+            ]
+        },
+        {
+            "name": "evidencias",
+            "description": "Archivos adjuntos a las actividades",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "BIGINT UNSIGNED",
+                    "primary": true
+                },
+                {
+                    "name": "registro_actividad_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": false,
+                    "fk": "registro_actividades.id"
+                },
+                {
+                    "name": "nombre_archivo",
+                    "type": "VARCHAR(255)",
+                    "nullable": false
+                },
+                {
+                    "name": "ruta_archivo",
+                    "type": "VARCHAR(500)",
+                    "nullable": false
+                },
+                {
+                    "name": "tipo_archivo",
+                    "type": "VARCHAR(50)",
+                    "nullable": true
+                },
+                {
+                    "name": "tamaño",
+                    "type": "INT UNSIGNED",
+                    "nullable": true
+                }
+            ],
+            "relationships": [
+                {
+                    "type": "belongsTo",
+                    "target": "registro_actividades",
+                    "fk": "registro_actividad_id"
+                }
+            ]
+        },
+        {
+            "name": "configuraciones",
+            "description": "Parámetros del sistema",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "BIGINT UNSIGNED",
+                    "primary": true
+                },
+                {
+                    "name": "key",
+                    "type": "VARCHAR(255)",
+                    "nullable": false,
+                    "unique": true
+                },
+                {
+                    "name": "value",
+                    "type": "TEXT",
+                    "nullable": true
+                },
+                {
+                    "name": "description",
+                    "type": "VARCHAR(500)",
+                    "nullable": true
+                },
+                {
+                    "name": "type",
+                    "type": "VARCHAR(50)",
+                    "nullable": false
+                }
+            ],
+            "relationships": []
+        },
+        {
+            "name": "solicitudes_reapertura",
+            "description": "Solicitudes de reapertura de registros",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "BIGINT UNSIGNED",
+                    "primary": true
+                },
+                {
+                    "name": "registro_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": false,
+                    "fk": "registros.id"
+                },
+                {
+                    "name": "solicitante_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": false,
+                    "fk": "users.id"
+                },
+                {
+                    "name": "motivo",
+                    "type": "TEXT",
+                    "nullable": false
+                },
+                {
+                    "name": "estado",
+                    "type": "ENUM",
+                    "values": [
+                        "pendiente",
+                        "aprobada",
+                        "rechazada"
+                    ]
+                },
+                {
+                    "name": "aprobador_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": true,
+                    "fk": "users.id"
+                },
+                {
+                    "name": "comentario_respuesta",
+                    "type": "TEXT",
+                    "nullable": true
+                },
+                {
+                    "name": "fecha_limite_subsanacion",
+                    "type": "DATE",
+                    "nullable": true
+                },
+                {
+                    "name": "fecha_respuesta",
+                    "type": "TIMESTAMP",
+                    "nullable": true
+                }
+            ],
+            "relationships": [
+                {
+                    "type": "belongsTo",
+                    "target": "registros",
+                    "fk": "registro_id"
+                },
+                {
+                    "type": "belongsTo",
+                    "target": "users",
+                    "fk": "solicitante_id",
+                    "alias": "solicitante"
+                },
+                {
+                    "type": "belongsTo",
+                    "target": "users",
+                    "fk": "aprobador_id",
+                    "alias": "aprobador"
+                }
+            ]
+        },
+        {
+            "name": "registro_logs",
+            "description": "Trazabilidad de acciones sobre registros",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "BIGINT UNSIGNED",
+                    "primary": true
+                },
+                {
+                    "name": "registro_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": false,
+                    "fk": "registros.id"
+                },
+                {
+                    "name": "user_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": true,
+                    "fk": "users.id"
+                },
+                {
+                    "name": "accion",
+                    "type": "VARCHAR(50)",
+                    "nullable": false
+                },
+                {
+                    "name": "descripcion",
+                    "type": "TEXT",
+                    "nullable": true
+                },
+                {
+                    "name": "datos_anteriores",
+                    "type": "JSON",
+                    "nullable": true
+                },
+                {
+                    "name": "datos_nuevos",
+                    "type": "JSON",
+                    "nullable": true
+                },
+                {
+                    "name": "ip_address",
+                    "type": "VARCHAR(45)",
+                    "nullable": true
+                }
+            ],
+            "relationships": [
+                {
+                    "type": "belongsTo",
+                    "target": "registros",
+                    "fk": "registro_id"
+                },
+                {
+                    "type": "belongsTo",
+                    "target": "users",
+                    "fk": "user_id"
+                }
+            ]
+        },
+        {
+            "name": "auditoria_comentarios",
+            "description": "Comentarios durante la auditoría",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "BIGINT UNSIGNED",
+                    "primary": true
+                },
+                {
+                    "name": "registro_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": false,
+                    "fk": "registros.id"
+                },
+                {
+                    "name": "user_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": false,
+                    "fk": "users.id"
+                },
+                {
+                    "name": "comentario",
+                    "type": "TEXT",
+                    "nullable": false
+                }
+            ],
+            "relationships": [
+                {
+                    "type": "belongsTo",
+                    "target": "registros",
+                    "fk": "registro_id"
+                },
+                {
+                    "type": "belongsTo",
+                    "target": "users",
+                    "fk": "user_id",
+                    "alias": "auditor"
+                }
+            ]
+        },
+        {
+            "name": "hallazgos",
+            "description": "Gestión de Brechas/Acciones Correctivas",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "BIGINT UNSIGNED",
+                    "primary": true
+                },
+                {
+                    "name": "registro_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": false,
+                    "fk": "registros.id"
+                },
+                {
+                    "name": "registro_actividad_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": true,
+                    "fk": "registro_actividades.id"
+                },
+                {
+                    "name": "auditor_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": false,
+                    "fk": "users.id"
+                },
+                {
+                    "name": "descripcion",
+                    "type": "TEXT",
+                    "nullable": false
+                },
+                {
+                    "name": "accion_correctiva",
+                    "type": "TEXT",
+                    "nullable": true
+                },
+                {
+                    "name": "responsable",
+                    "type": "VARCHAR(255)",
+                    "nullable": true
+                },
+                {
+                    "name": "fecha_compromiso",
+                    "type": "DATE",
+                    "nullable": true
+                },
+                {
+                    "name": "estado",
+                    "type": "ENUM",
+                    "values": [
+                        "abierto",
+                        "cerrado"
+                    ]
+                },
+                {
+                    "name": "fecha_cierre",
+                    "type": "TIMESTAMP",
+                    "nullable": true
+                }
+            ],
+            "relationships": [
+                {
+                    "type": "belongsTo",
+                    "target": "registros",
+                    "fk": "registro_id"
+                },
+                {
+                    "type": "belongsTo",
+                    "target": "registro_actividades",
+                    "fk": "registro_actividad_id"
+                },
+                {
+                    "type": "belongsTo",
+                    "target": "users",
+                    "fk": "auditor_id",
+                    "alias": "auditor"
+                }
+            ]
+        },
+        {
+            "name": "compromisos",
+            "description": "Gestión de compromisos de contratistas por asignación",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "BIGINT UNSIGNED",
+                    "primary": true
+                },
+                {
+                    "name": "contratista_asignacion_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": false
+                },
+                {
+                    "name": "descripcion_compromiso",
+                    "type": "TEXT",
+                    "nullable": false
+                },
+                {
+                    "name": "fecha_cumplimiento",
+                    "type": "DATE",
+                    "nullable": true
+                },
+                {
+                    "name": "estado_cumplimiento",
+                    "type": "ENUM",
+                    "values": [
+                        "comprometido",
+                        "cumple",
+                        "no cumple"
+                    ]
+                }
+            ],
+            "relationships": [
+                {
+                    "type": "belongsTo",
+                    "target": "contratista_asignaciones",
+                    "fk": "contratista_asignacion_id"
+                }
+            ]
+        },
+        {
+            "name": "privilegios",
+            "description": "Permisos granulares por rol y módulo (read/write/excec)",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "BIGINT UNSIGNED",
+                    "primary": true
+                },
+                {
+                    "name": "role_id",
+                    "type": "BIGINT UNSIGNED",
+                    "nullable": false
+                },
+                {
+                    "name": "ref_modulo",
+                    "type": "VARCHAR(255)",
+                    "nullable": false
+                },
+                {
+                    "name": "read",
+                    "type": "TINYINT(1)",
+                    "nullable": false
+                },
+                {
+                    "name": "write",
+                    "type": "TINYINT(1)",
+                    "nullable": false
+                },
+                {
+                    "name": "excec",
+                    "type": "TINYINT(1)",
+                    "nullable": false
+                }
+            ],
+            "relationships": [
+                {
+                    "type": "belongsTo",
+                    "target": "roles",
+                    "fk": "role_id"
+                }
+            ]
+        }
+    ],
+    "relationships": [
+        {
+            "from": "users",
+            "to": "users",
+            "type": "1:N",
+            "fk": "parent_id",
+            "label": "jerarquía contratistas"
+        },
+        {
+            "from": "users",
+            "to": "tipos_contratista",
+            "type": "N:1",
+            "fk": "tipo_contratista_id"
+        },
+        {
+            "from": "users",
+            "to": "dependencias",
+            "type": "N:1",
+            "fk": "dependencia_id"
+        },
+        {
+            "from": "elementos",
+            "to": "programas",
+            "type": "N:1",
+            "fk": "programa_id"
+        },
+        {
+            "from": "actividades",
+            "to": "elementos",
+            "type": "N:1",
+            "fk": "elemento_id"
+        },
+        {
+            "from": "contratista_asignaciones",
+            "to": "users",
+            "type": "N:1",
+            "fk": "user_id"
+        },
+        {
+            "from": "contratista_asignaciones",
+            "to": "tipos_contratista",
+            "type": "N:1",
+            "fk": "tipo_contratista_id"
+        },
+        {
+            "from": "contratista_asignaciones",
+            "to": "dependencias",
+            "type": "N:1",
+            "fk": "dependencia_id"
+        },
+        {
+            "from": "contratista_asignaciones",
+            "to": "users",
+            "type": "N:1",
+            "fk": "administrador_contrato_id"
+        },
+        {
+            "from": "registros",
+            "to": "users",
+            "type": "N:1",
+            "fk": "user_id"
+        },
+        {
+            "from": "registros",
+            "to": "contratista_asignaciones",
+            "type": "N:1",
+            "fk": "contratista_asignacion_id"
+        },
+        {
+            "from": "registro_actividades",
+            "to": "registros",
+            "type": "N:1",
+            "fk": "registro_id"
+        },
+        {
+            "from": "registro_actividades",
+            "to": "actividades",
+            "type": "N:1",
+            "fk": "actividad_id"
+        },
+        {
+            "from": "evidencias",
+            "to": "registro_actividades",
+            "type": "N:1",
+            "fk": "registro_actividad_id"
+        },
+        {
+            "from": "solicitudes_reapertura",
+            "to": "registros",
+            "type": "N:1",
+            "fk": "registro_id"
+        },
+        {
+            "from": "solicitudes_reapertura",
+            "to": "users",
+            "type": "N:1",
+            "fk": "solicitante_id"
+        },
+        {
+            "from": "registro_logs",
+            "to": "registros",
+            "type": "N:1",
+            "fk": "registro_id"
+        },
+        {
+            "from": "auditoria_comentarios",
+            "to": "registros",
+            "type": "N:1",
+            "fk": "registro_id"
+        },
+        {
+            "from": "hallazgos",
+            "to": "registros",
+            "type": "N:1",
+            "fk": "registro_id"
+        },
+        {
+            "from": "compromisos",
+            "to": "contratista_asignaciones",
+            "type": "N:1",
+            "fk": "contratista_asignacion_id"
+        },
+        {
+            "from": "privilegios",
+            "to": "roles",
+            "type": "N:1",
+            "fk": "role_id"
+        }
+    ],
+    "mermaid_erd": "erDiagram\n    USERS ||--o{ USERS : \"parent_id\"\n    USERS ||--o{ REGISTROS : \"user_id\"\n    USERS ||--o{ CONTRATISTA_ASIGNACIONES : \"user_id\"\n    TIPOS_CONTRATISTA ||--o{ USERS : \"tipo_contratista_id\"\n    DEPENDENCIAS ||--o{ USERS : \"dependencia_id\"\n    PROGRAMAS ||--o{ ELEMENTOS : \"programa_id\"\n    ELEMENTOS ||--o{ ACTIVIDADES : \"elemento_id\"\n    CONTRATISTA_ASIGNACIONES ||--o{ REGISTROS : \"contratista_asignacion_id\"\n    CONTRATISTA_ASIGNACIONES ||--o{ COMPROMISOS : \"contratista_asignacion_id\"\n    REGISTROS ||--o{ REGISTRO_ACTIVIDADES : \"registro_id\"\n    REGISTROS ||--o{ REGISTRO_LOGS : \"registro_id\"\n    REGISTROS ||--o{ SOLICITUDES_REAPERTURA : \"registro_id\"\n    REGISTROS ||--o{ AUDITORIA_COMENTARIOS : \"registro_id\"\n    REGISTROS ||--o{ HALLAZGOS : \"registro_id\"\n    ACTIVIDADES ||--o{ REGISTRO_ACTIVIDADES : \"actividad_id\"\n    REGISTRO_ACTIVIDADES ||--o{ EVIDENCIAS : \"registro_actividad_id\"\n    REGISTRO_ACTIVIDADES ||--o{ HALLAZGOS : \"registro_actividad_id\"\n    ROLES ||--o{ PRIVILEGIOS : \"role_id\""
+}

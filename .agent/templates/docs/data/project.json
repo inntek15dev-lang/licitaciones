@@ -1,9 +1,19 @@
 {
-    "name": "",
-    "version": "0.0.0",
-    "description": "",
-    "lastUpdated": "",
-    "environment": "",
-    "status": "",
-    "stack": {}
+    "name": "OIEM Abastible",
+    "version": "1.5",
+    "description": "Observatorio de Información y Evaluación Mensual - Sistema para gestionar el cumplimiento de programas de seguridad de empresas contratistas de Abastible",
+    "lastUpdated": "2026-01-29T14:15:51-03:00",
+    "environment": "laravel",
+    "status": "development",
+    "stack": {
+        "framework": "Laravel 12.x",
+        "frontend": "Livewire 3.x",
+        "css": "Tailwind CSS 3.x",
+        "database": "MySQL 8.x",
+        "authentication": "Laravel Breeze"
+    },
+    "repository": {
+        "type": "git",
+        "path": "c:/laragon/www/abastible"
+    }
 }

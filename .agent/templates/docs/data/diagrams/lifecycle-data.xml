@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<diagram type="lifecycle" id="lifecycle-data" title="Ciclo de Vida de Datos y Reglas">
+  <metadata>
+    <description>Estados y transiciones de un registro con referencia a reglas de negocio</description>
+  </metadata>
+  <roles>
+    <role id="contratista" name="Contratista" color="#22c55e"/>
+    <role id="admin_contrato" name="Admin Contrato" color="#a855f7"/>
+    <role id="admin" name="Administrador" color="#ef4444"/>
+    <role id="sistema" name="Sistema" color="#3b82f6"/>
+  </roles>
+  <states>
+    <state id="created" x="350" y="50" label="Creado" color="#94a3b8" role="contratista"/>
+    <state id="pending" x="350" y="140" label="Pendiente" color="#3b82f6" role="contratista"/>
+    <state id="auditing" x="350" y="230" label="Auditando" color="#eab308" role="admin_contrato"/>
+    <state id="audited-terreno" x="200" y="330" label="Auditado Terreno" color="#22c55e" role="admin_contrato"/>
+    <state id="audited-sistema" x="500" y="330" label="Auditado Sistema" color="#22c55e" role="admin_contrato"/>
+    <state id="reopened" x="350" y="430" label="Reabierto" color="#f97316" role="admin_contrato"/>
+    <state id="closed" x="350" y="550" label="Cerrado" color="#6b7280" role="sistema"/>
+  </states>
+  <transitions>
+    <transition from="created" to="pending" label="Guardar (RN-02)" rule="RN-002" actor="contratista"/>
+    <transition from="pending" to="auditing" label="Iniciar Auditoría (RN-04)" rule="RN-004" actor="admin_contrato"/>
+    <transition from="auditing" to="audited-terreno" label="Completar Terreno" actor="admin_contrato"/>
+    <transition from="auditing" to="audited-sistema" label="Completar Sistema" actor="admin_contrato"/>
+    <transition from="audited-terreno" to="reopened" label="Aprobar Reapertura (RN-05)" rule="RN-005" actor="admin_contrato"/>
+    <transition from="audited-sistema" to="reopened" label="Aprobar Reapertura (RN-05)" rule="RN-005" actor="admin_contrato"/>
+    <transition from="reopened" to="pending" label="Subsanar (RN-02)" rule="RN-002" actor="contratista"/>
+    <transition from="reopened" to="closed" label="Vence Plazo (RN-09)" rule="RN-009" actor="sistema"/>
+    <transition from="audited-terreno" to="closed" label="Sin Cambios" actor="sistema"/>
+    <transition from="audited-sistema" to="closed" label="Sin Cambios" actor="sistema"/>
+  </transitions>
+</diagram>

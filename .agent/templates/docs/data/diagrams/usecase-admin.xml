@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<diagram type="usecase" id="usecase-admin" title="Casos de Uso - Administrador">
+  <metadata>
+    <description>Funcionalidades disponibles para el rol Administrador</description>
+    <role>admin</role>
+  </metadata>
+  <actor id="admin" x="80" y="300" label="Administrador"/>
+  <usecases>
+    <usecase id="uc1" x="250" y="50" label="Ver Dashboard"/>
+    <usecase id="uc2" x="250" y="100" label="Gestionar Registros"/>
+    <usecase id="uc3" x="250" y="150" label="Auditar Registros"/>
+    <usecase id="uc4" x="250" y="200" label="Aprobar Reaperturas"/>
+    <usecase id="uc5" x="250" y="250" label="Gestionar Contratistas"/>
+    <usecase id="uc6" x="250" y="300" label="Gestionar Dependencias"/>
+    <usecase id="uc7" x="250" y="350" label="Gestionar Elementos"/>
+    <usecase id="uc8" x="250" y="400" label="Gestionar Actividades"/>
+    <usecase id="uc9" x="250" y="450" label="Configurar Sistema"/>
+    <usecase id="uc10" x="250" y="500" label="Generar Reportes"/>
+    <usecase id="uc11" x="250" y="550" label="Ver Trazabilidad"/>
+    <usecase id="uc12" x="250" y="600" label="Exportar PDF/Excel"/>
+  </usecases>
+  <associations>
+    <associate actor="admin" usecase="uc1"/>
+    <associate actor="admin" usecase="uc2"/>
+    <associate actor="admin" usecase="uc3"/>
+    <associate actor="admin" usecase="uc4"/>
+    <associate actor="admin" usecase="uc5"/>
+    <associate actor="admin" usecase="uc6"/>
+    <associate actor="admin" usecase="uc7"/>
+    <associate actor="admin" usecase="uc8"/>
+    <associate actor="admin" usecase="uc9"/>
+    <associate actor="admin" usecase="uc10"/>
+    <associate actor="admin" usecase="uc11"/>
+    <associate actor="admin" usecase="uc12"/>
+  </associations>
+</diagram>

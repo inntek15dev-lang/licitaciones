@@ -1,42 +1,60 @@
 {
-    "er": [
-        {
-            "id": "er-full",
-            "title": "ER Completo",
-            "path": "data/diagrams/er_diagram.svg",
-            "description": "Base de Datos"
-        }
-    ],
+    "er": [],
     "flow": [
         {
-            "id": "flow-auth",
-            "title": "Autenticación",
-            "path": "data/diagrams/flow_auth.xml",
-            "description": "Flujo de Login"
+            "file": "flow_apisynccontroller.xml",
+            "title": "apisynccontroller",
+            "role": "usuario"
         },
         {
-            "id": "flow-licitaciones",
-            "title": "Licitaciones",
-            "path": "data/diagrams/flow_licitaciones.xml",
-            "description": "Flujo Principal"
+            "file": "flow_create.xml",
+            "title": "create",
+            "role": "principal"
         },
         {
-            "id": "flow-maestros",
-            "title": "Maestros",
-            "path": "data/diagrams/flow_maestros.xml",
-            "description": "Flujo Admin"
+            "file": "flow_dashboard.xml",
+            "title": "dashboard",
+            "role": "usuario"
         },
         {
-            "id": "flow-ofertas",
-            "title": "Ofertas",
-            "path": "data/diagrams/flow_ofertas.xml",
-            "description": "Flujo Contratista"
+            "file": "flow_edit.xml",
+            "title": "edit",
+            "role": "principal"
         },
         {
-            "id": "flow-precalificacion",
-            "title": "Precalificación",
-            "path": "data/diagrams/flow_precalificacion.xml",
-            "description": "Flujo Validación"
+            "file": "flow_index.xml",
+            "title": "index",
+            "role": "principal"
+        },
+        {
+            "file": "flow_loginform.xml",
+            "title": "loginform",
+            "role": "usuario"
+        },
+        {
+            "file": "flow_logout.xml",
+            "title": "logout",
+            "role": "usuario"
+        },
+        {
+            "file": "flow_revisar.xml",
+            "title": "revisar",
+            "role": "admin"
+        },
+        {
+            "file": "flow_show.xml",
+            "title": "show",
+            "role": "principal"
+        },
+        {
+            "file": "flow_solicitudprecalificacion.xml",
+            "title": "solicitudprecalificacion",
+            "role": "contratista"
+        },
+        {
+            "file": "flow_verifyemailcontroller.xml",
+            "title": "verifyemailcontroller",
+            "role": "usuario"
         }
     ],
     "usecase": []

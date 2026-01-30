@@ -1,0 +1,12 @@
+<diagram type="flowchart" id="Index">
+  <metadata>
+    <description>Flow for Index</description>
+    <role>principal</role>
+  </metadata>
+  <nodes>
+    <node id="updatingSearch" type="process" x="200" y="50" label="updatingSearch" role="principal" color="#3b82f6"/>
+    <node id="updatingFilterEstado" type="process" x="200" y="130" label="updatingFilterEstado" role="principal" color="#3b82f6"/>
+    <node id="render" type="process" x="200" y="210" label="render" role="principal" color="#3b82f6"/>
+
+  </nodes>
+</diagram>

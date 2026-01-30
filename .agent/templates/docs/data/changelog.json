@@ -1,3 +1,56 @@
 {
-    "entries": []
+    "entries": [
+        {
+            "date": "2024-12-16",
+            "version": "1.0",
+            "type": "feature",
+            "description": "Lanzamiento inicial con todos los módulos base",
+            "filesChanged": []
+        },
+        {
+            "date": "2024-12-16",
+            "version": "1.1",
+            "type": "feature",
+            "description": "Múltiples Evidencias: Soporte para hasta 4 archivos por actividad. Botones Ver/Descargar separados para Admin y Contratista",
+            "filesChanged": []
+        },
+        {
+            "date": "2024-12-16",
+            "version": "1.2",
+            "type": "feature",
+            "description": "CRUD Dependencias: Gestión de plantas desde admin. Filtros y ordenamiento en tabla de registros",
+            "filesChanged": []
+        },
+        {
+            "date": "2024-12-16",
+            "version": "1.3",
+            "type": "feature",
+            "description": "Promedio Anual: Nueva columna calculada. UI Mejorada con spinner de carga y criterios explícitos",
+            "filesChanged": []
+        },
+        {
+            "date": "2026-01-06",
+            "version": "1.4",
+            "type": "feature",
+            "description": "Gestión de Usuarios para Contratistas: trabajadores operativos con acceso restringido. Jerarquía de datos bajo empresa madre. Tabla de contratistas Full Width",
+            "filesChanged": []
+        },
+        {
+            "date": "2026-01-12",
+            "version": "1.5",
+            "type": "feature",
+            "description": "Sistema de Solicitudes de Reapertura con flujo completo. Trazabilidad Completa con logs y exportación PDF. Estados de Auditoría. Comentarios de Auditoría. Subsanación de Actividades. Usuarios Activos. Notificaciones por Email",
+            "filesChanged": []
+        },
+        {
+            "date": "2026-01-26",
+            "version": "1.5.1",
+            "type": "docs",
+            "description": "Reorganización de archivos del proyecto: documentación movida a .agent/docs, scripts a .agent/scripts. Creación de sistema de documentación automática con JSON y visor HTML",
+            "filesChanged": [
+                "docs/",
+                ".agent/skills/project-docs/"
+            ]
+        }
+    ]
 }

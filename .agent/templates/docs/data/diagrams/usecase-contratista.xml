@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<diagram type="usecase" id="usecase-contratista" title="Casos de Uso - Contratista">
+  <metadata>
+    <description>Funcionalidades disponibles para el rol Contratista</description>
+    <role>contratista</role>
+  </metadata>
+  <actor id="contratista" x="80" y="250" label="Contratista"/>
+  <usecases>
+    <usecase id="uc1" x="250" y="50" label="Ver Dashboard"/>
+    <usecase id="uc2" x="250" y="110" label="Crear Registro Mensual"/>
+    <usecase id="uc3" x="250" y="170" label="Subir Evidencias"/>
+    <usecase id="uc4" x="250" y="230" label="Ver Historial"/>
+    <usecase id="uc5" x="250" y="290" label="Editar Registro"/>
+    <usecase id="uc6" x="250" y="350" label="Solicitar Reapertura"/>
+    <usecase id="uc7" x="250" y="410" label="Subsanar Registro"/>
+    <usecase id="uc8" x="250" y="470" label="Gestionar Usuarios"/>
+  </usecases>
+  <associations>
+    <associate actor="contratista" usecase="uc1"/>
+    <associate actor="contratista" usecase="uc2"/>
+    <associate actor="contratista" usecase="uc3"/>
+    <associate actor="contratista" usecase="uc4"/>
+    <associate actor="contratista" usecase="uc5"/>
+    <associate actor="contratista" usecase="uc6"/>
+    <associate actor="contratista" usecase="uc7"/>
+    <associate actor="contratista" usecase="uc8"/>
+  </associations>
+  <includes>
+    <include from="uc2" to="uc3" label="include"/>
+  </includes>
+</diagram>

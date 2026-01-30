@@ -1,3 +1,74 @@
 {
-    "rules": []
+    "rules": [
+        {
+            "id": "RN-001",
+            "title": "Evidencia Obligatoria (Pendiente)",
+            "description": "¿Es obligatorio cargar evidencia para cerrar un registro? Actualmente el sistema permite guardar sin evidencias, pero esto podría cambiar según decisión pendiente.",
+            "type": "restriction",
+            "module_id": "formulario-registro"
+        },
+        {
+            "id": "RN-002",
+            "title": "Edición de Registros",
+            "description": "Los contratistas solo pueden editar registros del mes en curso y que no estén cerrados/auditados.",
+            "type": "permission",
+            "module_id": "gestion-registros"
+        },
+        {
+            "id": "RN-003",
+            "title": "Bloqueo de Datos Maestros",
+            "description": "La edición de datos maestros del contratista (Nombre, RUT) podría bloquearse para evitar inconsistencias con ACEM.",
+            "type": "restriction",
+            "module_id": "perfil-contratista"
+        },
+        {
+            "id": "RN-004",
+            "title": "Auditoría de Terreno y Sistema",
+            "description": "Todo registro puede tener dos tipos de auditoría independientes: Terreno y Sistema.",
+            "type": "flow",
+            "module_id": "auditoria"
+        },
+        {
+            "id": "RN-005",
+            "title": "Reapertura de Auditoría",
+            "description": "Si se aprueba una reapertura, el registro pasa al estado 'Reabierto' y el contratista puede subsanar hasta la fecha límite.",
+            "type": "flow",
+            "module_id": "solicitudes-reapertura"
+        },
+        {
+            "id": "RN-006",
+            "title": "Jerarquía de Usuarios",
+            "description": "Usuarios operativos solo ven datos de su servicio/dependencia asignado. Todos los registros se guardan bajo el ID de la empresa.",
+            "type": "permission",
+            "module_id": "jerarquia-usuarios"
+        },
+        {
+            "id": "RN-007",
+            "title": "Meta del Programa",
+            "description": "El cumplimiento se compara contra una meta global configurable (actualmente 85%).",
+            "type": "calculation",
+            "module_id": "dashboard-contratista"
+        },
+        {
+            "id": "RN-008",
+            "title": "Máximo de Evidencias",
+            "description": "Solo se permiten hasta 4 archivos de evidencia por actividad.",
+            "type": "restriction",
+            "module_id": "formulario-registro"
+        },
+        {
+            "id": "RN-009",
+            "title": "Cierre Automático",
+            "description": "Los registros reabiertos se cierran automáticamente si vence el plazo de subsanación.",
+            "type": "flow",
+            "module_id": "solicitudes-reapertura"
+        },
+        {
+            "id": "RN-010",
+            "title": "Usuarios Activos",
+            "description": "Usuarios desactivados mantienen su historial pero no pueden iniciar sesión.",
+            "type": "permission",
+            "module_id": "usuarios-activos"
+        }
+    ]
 }

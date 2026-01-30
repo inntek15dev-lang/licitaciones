@@ -91,6 +91,13 @@ find . -type f -exec chmod 644 {} \;
 chmod -R 775 storage bootstrap/cache
 ```
 
+## 6. R-SERV: RUNTIME SERVICE ASSURANCE (Auto-Start)
+- **Concept:** If environment is local and critical development services are missing, auto-start them.
+- **Trigger:** `APP_ENV=local`.
+- **Services:**
+    - **Vite:** Check port 5173. If closed -> `cmd /c "start /B npm run dev"` (Windows) or `npm run dev &` (Linux).
+    - **Queue Worker:** Check if `php artisan queue:work` is running (optional, but good practice).
+
 ## 7. W-ROOT: WEB ROOT ALIGNMENT (Laragon/Apache/Nginx)
 - **Symptom:** Browser shows "Index of /" or directory listing instead of the app.
 - **Cause:** Virtual Host Document Root points to project root `C:/laragon/www/project` instead of `.../project/public`.

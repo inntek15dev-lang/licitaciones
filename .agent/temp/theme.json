@@ -1,0 +1,12 @@
+{
+    "colors": {
+        "primary": "#5e72e4",
+        "secondary": "#2dce89",
+        "background": "#f8f9fe",
+        "surface": "#ffffff",
+        "text_main": "#32325d",
+        "text_muted": "#8898aa"
+    },
+    "font": "Open Sans, sans-serif",
+    "radius": "0.5rem"
+}

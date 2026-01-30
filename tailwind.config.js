@@ -11,8 +11,21 @@ export default {
 
     theme: {
         extend: {
+            colors: {
+                primary: 'var(--color-primary)',
+                secondary: 'var(--color-secondary)',
+                background: 'var(--color-background)',
+                surface: 'var(--color-surface)',
+                text: {
+                    main: 'var(--color-text-main)',
+                    muted: 'var(--color-text-muted)',
+                }
+            },
+            borderRadius: {
+                DEFAULT: 'var(--radius)',
+            },
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Open Sans', ...defaultTheme.fontFamily.sans],
             },
         },
     },

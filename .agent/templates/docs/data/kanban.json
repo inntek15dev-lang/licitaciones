@@ -1,3 +1,187 @@
 {
-    "columns": []
+    "columns": [
+        {
+            "id": "backlog",
+            "title": "📋 Backlog Aprobado",
+            "color": "#3b82f6",
+            "items": [
+                {
+                    "id": "reuniones-accountability",
+                    "title": "Registro de Reuniones de Accountability",
+                    "description": "Cargar y almacenar registros de reuniones mensuales entre contratistas y administradores",
+                    "priority": "low",
+                    "requestedBy": "karla aguirre"
+                },
+                {
+                    "id": "acciones-correctivas",
+                    "title": "Gestión de Acciones Correctivas",
+                    "description": "Registrar brechas, asignar responsables, definir fechas y seguimiento al cierre",
+                    "priority": "medium",
+                    "requestedBy": "karla aguirre / Katherine Dominguez"
+                },
+                {
+                    "id": "conexion-acem",
+                    "title": "Conexión con ACEM",
+                    "description": "Integrar con base de datos ACEM para traer datos de empresas contratistas",
+                    "priority": "high",
+                    "requestedBy": "Francisco García",
+                    "blockedBy": "Esperando acceso de IT Abastible"
+                },
+                {
+                    "id": "carga-masiva",
+                    "title": "Carga Masiva de Contratistas",
+                    "description": "Herramienta para cargar múltiples contratistas desde Excel/CSV",
+                    "priority": "medium",
+                    "requestedBy": "maria jose aguilera"
+                },
+                {
+                    "id": "carga-historico",
+                    "title": "Carga de Histórico",
+                    "description": "Cargar datos históricos de cumplimiento desde Excel actuales",
+                    "priority": "low",
+                    "requestedBy": "karla aguirre"
+                }
+            ]
+        },
+        {
+            "id": "implemented",
+            "title": "✅ Implementado",
+            "color": "#22c55e",
+            "items": [
+                {
+                    "id": "dashboard-admin",
+                    "title": "Dashboard Admin",
+                    "description": "Resumen ejecutivo con KPIs de cumplimiento",
+                    "version": "1.0"
+                },
+                {
+                    "id": "dashboard-contratista",
+                    "title": "Dashboard Contratista",
+                    "description": "Vista de cumplimiento con semáforo visual",
+                    "version": "1.0"
+                },
+                {
+                    "id": "gestion-registros",
+                    "title": "Gestión de Registros",
+                    "description": "Vista con filtros y ordenamiento",
+                    "version": "1.2"
+                },
+                {
+                    "id": "formulario-registro",
+                    "title": "Formulario de Registro",
+                    "description": "Con hasta 4 evidencias por actividad",
+                    "version": "1.1"
+                },
+                {
+                    "id": "gestion-evidencias",
+                    "title": "Gestión de Evidencias",
+                    "description": "Ver y descargar archivos",
+                    "version": "1.1"
+                },
+                {
+                    "id": "elementos-actividades",
+                    "title": "Elementos y Actividades",
+                    "description": "CRUD completo",
+                    "version": "1.0"
+                },
+                {
+                    "id": "dependencias",
+                    "title": "Gestión de Dependencias",
+                    "description": "CRUD de plantas/dependencias",
+                    "version": "1.2"
+                },
+                {
+                    "id": "configuracion",
+                    "title": "Configuración del Sistema",
+                    "description": "Meta del programa y parámetros",
+                    "version": "1.0"
+                },
+                {
+                    "id": "reportes",
+                    "title": "Reportes y Exportación",
+                    "description": "Excel y PDF",
+                    "version": "1.0"
+                },
+                {
+                    "id": "autenticacion",
+                    "title": "Autenticación y Roles",
+                    "description": "Login con Laravel Breeze",
+                    "version": "1.0"
+                },
+                {
+                    "id": "jerarquia-usuarios",
+                    "title": "Jerarquía de Usuarios",
+                    "description": "Usuarios operativos por contratista",
+                    "version": "1.4"
+                },
+                {
+                    "id": "solicitudes-reapertura",
+                    "title": "Solicitudes de Reapertura",
+                    "description": "Flujo completo con emails",
+                    "version": "1.5"
+                },
+                {
+                    "id": "trazabilidad",
+                    "title": "Trazabilidad de Registros",
+                    "description": "Logs con exportación PDF",
+                    "version": "1.5"
+                },
+                {
+                    "id": "auditoria",
+                    "title": "Estados de Auditoría",
+                    "description": "Estados y comentarios",
+                    "version": "1.5"
+                },
+                {
+                    "id": "usuarios-activos",
+                    "title": "Gestión Usuarios Activos",
+                    "description": "Activar/desactivar usuarios",
+                    "version": "1.5"
+                }
+            ]
+        },
+        {
+            "id": "proposed",
+            "title": "💡 Propuesto (Pendiente Aprobación)",
+            "color": "#eab308",
+            "items": [
+                {
+                    "id": "evidencia-obligatoria",
+                    "title": "Evidencia Obligatoria",
+                    "description": "¿Es obligatorio cargar evidencia para cerrar un registro?",
+                    "awaitingFrom": "Katherine/Karla"
+                },
+                {
+                    "id": "bloqueo-edicion",
+                    "title": "Bloquear Edición de Datos",
+                    "description": "¿Bloquear edición de datos maestros del contratista?",
+                    "awaitingFrom": "Katherine"
+                },
+                {
+                    "id": "creacion-usuarios",
+                    "title": "Creación de Usuarios",
+                    "description": "¿Quién crea usuarios contratista - el mismo contratista o el admin?",
+                    "awaitingFrom": "Katherine"
+                },
+                {
+                    "id": "eliminar-contratista",
+                    "title": "Botón Eliminar Contratista",
+                    "description": "¿Debe existir o estar oculto/restringido?",
+                    "awaitingFrom": "Katherine"
+                },
+                {
+                    "id": "plantillas-programas",
+                    "title": "Plantillas de Programas",
+                    "description": "Estructura de elementos y actividades por programa",
+                    "awaitingFrom": "maria jose / karla"
+                },
+                {
+                    "id": "hosting",
+                    "title": "Definir Hosting",
+                    "description": "¿Dónde se alojará el sistema en producción?",
+                    "awaitingFrom": "IT Abastible"
+                }
+            ]
+        }
+    ]
 }

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<diagram type="flowchart" id="flow-registro" title="Flujo de Registro Mensual">
+  <metadata>
+    <description>Proceso de creación y envío de registro mensual por contratista</description>
+    <module>Formulario de Registro</module>
+  </metadata>
+  <roles>
+    <role id="contratista" name="Contratista" color="#22c55e"/>
+    <role id="sistema" name="Sistema" color="#3b82f6"/>
+  </roles>
+  <nodes>
+    <node id="start" type="start" x="300" y="30" label="Inicio" role="sistema"/>
+    <node id="login" type="process" x="300" y="100" label="Contratista inicia sesión" role="contratista"/>
+    <node id="select-period" type="process" x="300" y="170" label="Seleccionar período" role="contratista"/>
+    <node id="check-exists" type="decision" x="300" y="250" label="¿Registro existe?" role="sistema"/>
+    <node id="create-new" type="process" x="150" y="330" label="Crear nuevo registro" role="sistema"/>
+    <node id="load-existing" type="process" x="450" y="330" label="Cargar registro existente" role="sistema"/>
+    <node id="fill-form" type="process" x="300" y="410" label="Completar actividades" role="contratista"/>
+    <node id="upload-evidence" type="process" x="300" y="480" label="Subir evidencias (max 4)" role="contratista"/>
+    <node id="validate" type="decision" x="300" y="560" label="¿Datos válidos?" role="sistema"/>
+    <node id="show-errors" type="process" x="150" y="640" label="Mostrar errores" role="sistema"/>
+    <node id="calculate" type="process" x="450" y="640" label="Calcular cumplimiento" role="sistema"/>
+    <node id="save" type="process" x="450" y="710" label="Guardar registro" role="sistema"/>
+    <node id="log" type="process" x="450" y="780" label="Registrar en trazabilidad" role="sistema"/>
+    <node id="end" type="end" x="450" y="850" label="Fin" role="sistema"/>
+  </nodes>
+  <connections>
+    <connect from="start" to="login"/>
+    <connect from="login" to="select-period"/>
+    <connect from="select-period" to="check-exists"/>
+    <connect from="check-exists" to="create-new" label="No"/>
+    <connect from="check-exists" to="load-existing" label="Sí"/>
+    <connect from="create-new" to="fill-form"/>
+    <connect from="load-existing" to="fill-form"/>
+    <connect from="fill-form" to="upload-evidence"/>
+    <connect from="upload-evidence" to="validate"/>
+    <connect from="validate" to="show-errors" label="No"/>
+    <connect from="validate" to="calculate" label="Sí"/>
+    <connect from="show-errors" to="fill-form"/>
+    <connect from="calculate" to="save"/>
+    <connect from="save" to="log"/>
+    <connect from="log" to="end"/>
+  </connections>
+</diagram>

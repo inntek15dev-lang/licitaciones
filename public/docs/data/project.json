@@ -1,11 +1,7 @@
 {
-    "name": "Licitaciones RyCE",
-    "description": "Plataforma de Gestión de Licitaciones. Documentación Auto-generada (Integrity Mode).",
-    "version": "0.4.4",
-    "lastUpdated": "2026-01-28T12:47:00",
-    "stack": {
-        "backend": "Laravel 12.x",
-        "frontend": "Livewire 3.x",
-        "db": "MySQL 8.4"
-    }
+    "name": "Licitaciones",
+    "version": "1.0.0",
+    "description": "Sistema de Gesti\u00f3n de Licitaciones e Inspecciones (RyCE Ecosystem)",
+    "lastUpdated": "2026-01-30T12:21:48+00:00",
+    "repo": "local"
 }

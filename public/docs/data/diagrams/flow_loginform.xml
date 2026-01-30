@@ -1,0 +1,10 @@
+<diagram type="flowchart" id="LoginForm">
+  <metadata>
+    <description>Flow for LoginForm</description>
+    <role>usuario</role>
+  </metadata>
+  <nodes>
+    <node id="authenticate" type="process" x="200" y="50" label="authenticate" role="usuario" color="#3b82f6"/>
+
+  </nodes>
+</diagram>

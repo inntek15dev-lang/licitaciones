@@ -46,6 +46,38 @@ class DatabaseSeeder extends Seeder
         }
         $this->command->info('✅ Categorías de licitaciones creadas');
 
+        // === MASTER REQ [6]: Catálogo Motivos Rechazo (Orden Crítico) ===
+        $motivos = [
+            ['id' => 1, 'motivo' => 'Precio Elevado', 'etapa_aplicable' => 'Cierre'],
+            ['id' => 2, 'motivo' => 'Falla Técnica', 'etapa_aplicable' => 'Cierre'],
+            ['id' => 3, 'motivo' => 'No Factible', 'etapa_aplicable' => 'Inicial'],
+        ];
+        foreach ($motivos as $m) {
+            \App\Models\CatMotivoRechazo::updateOrCreate(['id' => $m['id']], $m);
+        }
+        $this->command->info('✅ Catálogo de Motivos de Rechazo creado');
+
+        // === MASTER REQ [6]: Tipos y Estados ===
+        $tipos = [
+            ['id' => 1, 'nombre' => 'Estratégica'],
+            ['id' => 2, 'nombre' => 'No Estratégica'],
+        ];
+        foreach ($tipos as $t) {
+            \App\Models\CatTipoLicitacion::updateOrCreate(['id' => $t['id']], $t);
+        }
+
+        $estados = [
+            ['id' => 1, 'nombre_estado' => 'Borrador'],
+            ['id' => 2, 'nombre_estado' => 'Publicada'],
+            ['id' => 3, 'nombre_estado' => 'En Evaluación'],
+            ['id' => 4, 'nombre_estado' => 'Adjudicada'],
+            ['id' => 5, 'nombre_estado' => 'Perdida'],
+        ];
+        foreach ($estados as $e) {
+            \App\Models\CatEstado::updateOrCreate(['id' => $e['id']], $e);
+        }
+        $this->command->info('✅ Catálogos Tipos y Estados creados');
+
         // === Crear Empresas Principales (Clientes RyCE) ===
         $empresaPrincipal1 = EmpresaPrincipal::firstOrCreate(
             ['rut' => '76.123.456-7'],
@@ -206,6 +238,7 @@ class DatabaseSeeder extends Seeder
                 'requiere_precalificacion' => true,
                 'responsable_precalificacion' => 'ambos',
                 'usuario_creador_id' => $principal->id,
+                'es_interesante' => true,
             ]
         );
 
@@ -224,6 +257,7 @@ class DatabaseSeeder extends Seeder
                 'fecha_cierre_recepcion_ofertas' => now()->subDays(10),
                 'requiere_precalificacion' => false,
                 'usuario_creador_id' => $principal->id,
+                'es_interesante' => false,
             ]
         );
 
@@ -243,6 +277,40 @@ class DatabaseSeeder extends Seeder
             ]
         );
         $this->command->info('   📋 3 Licitaciones de muestra creadas');
+
+        // === MASTER REQ [3.10]: Revisiones Calidad ===
+        \App\Models\RevisionCalidad::create([
+            'licitacion_id' => $licitacion1->id,
+            'contiene_errores' => false,
+            'observaciones' => 'Revisión de calidad aprobada. Bases completas.',
+        ]);
+
+        \App\Models\RevisionCalidad::create([
+            'licitacion_id' => $licitacion3->id, // Borrador
+            'contiene_errores' => true,
+            'observaciones' => 'Faltan anexos técnicos. Corregir antes de publicar.',
+        ]);
+        $this->command->info('   ✅ Revisiones de Calidad creadas');
+
+        // === MASTER REQ [3.11]: Lecciones Aprendidas (Caso Perdida) ===
+        // Creamos una Licitación Perdida para testing
+        $licitacionPerdida = \App\Models\Licitacion::firstOrCreate(
+            ['codigo_licitacion' => 'LIC-INNTEK-LOST'],
+            [
+                'titulo' => '[TEST] Proyecto Cancelado/Perdido',
+                'principal_id' => $empresaPrincipal1->id,
+                'estado' => 'perdida', // Estado válido en MASTER REQ
+                'tipo_licitacion' => 'publica',
+                'usuario_creador_id' => $principal->id,
+                'es_interesante' => true,
+            ]
+        );
+        \App\Models\LeccionAprendida::create([
+            'licitacion_id' => $licitacionPerdida->id,
+            'motivo_id' => 1, // Precio Elevado
+            'analisis_detalle' => 'El presupuesto excedió el Capex disponible por un 20%.',
+        ]);
+        $this->command->info('   ✅ Lecciones Aprendidas creadas');
 
         // === Sample Ofertas (2 por licitación publicada/adjudicada) ===
         foreach ([$licitacion1, $licitacion2] as $lic) {

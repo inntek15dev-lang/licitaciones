@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<diagram type="usecase" id="usecase-usuario" title="Casos de Uso - Usuario Operativo">
+  <metadata>
+    <description>Funcionalidades disponibles para el rol Usuario Contratista (operativo)</description>
+    <role>usuario_contratista</role>
+  </metadata>
+  <actor id="usuario" x="80" y="180" label="Usuario Operativo"/>
+  <usecases>
+    <usecase id="uc1" x="280" y="80" label="Ver Dashboard (filtrado)"/>
+    <usecase id="uc2" x="280" y="150" label="Crear Registro"/>
+    <usecase id="uc3" x="280" y="220" label="Subir Evidencias"/>
+    <usecase id="uc4" x="280" y="290" label="Ver Historial (filtrado)"/>
+  </usecases>
+  <associations>
+    <associate actor="usuario" usecase="uc1"/>
+    <associate actor="usuario" usecase="uc2"/>
+    <associate actor="usuario" usecase="uc3"/>
+    <associate actor="usuario" usecase="uc4"/>
+  </associations>
+  <constraints>
+    <constraint id="c1" text="Solo ve datos de su servicio/dependencia asignado"/>
+    <constraint id="c2" text="Registros se guardan bajo empresa padre"/>
+  </constraints>
+</diagram>

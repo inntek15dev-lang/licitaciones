@@ -1,0 +1,16 @@
+<diagram type="flowchart" id="Revisar">
+  <metadata>
+    <description>Flow for Revisar</description>
+    <role>admin</role>
+  </metadata>
+  <nodes>
+    <node id="mount" type="process" x="200" y="50" label="mount" role="admin" color="#ef4444"/>
+    <node id="abrirModalAprobar" type="process" x="200" y="130" label="abrirModalAprobar" role="admin" color="#ef4444"/>
+    <node id="abrirModalRechazar" type="process" x="200" y="210" label="abrirModalRechazar" role="admin" color="#ef4444"/>
+    <node id="cerrarModales" type="process" x="200" y="290" label="cerrarModales" role="admin" color="#ef4444"/>
+    <node id="aprobar" type="process" x="200" y="370" label="aprobar" role="admin" color="#ef4444"/>
+    <node id="rechazar" type="process" x="200" y="450" label="rechazar" role="admin" color="#ef4444"/>
+    <node id="render" type="process" x="200" y="530" label="render" role="admin" color="#ef4444"/>
+
+  </nodes>
+</diagram>

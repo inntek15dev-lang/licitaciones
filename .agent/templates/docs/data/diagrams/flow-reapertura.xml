@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<diagram type="flowchart" id="flow-reapertura" title="Flujo de Solicitud de Reapertura">
+  <metadata>
+    <description>Proceso de solicitud y aprobación de reapertura de registros</description>
+    <module>Solicitudes de Reapertura</module>
+  </metadata>
+  <roles>
+    <role id="contratista" name="Contratista" color="#22c55e"/>
+    <role id="admin_contrato" name="Admin Contrato" color="#a855f7"/>
+    <role id="admin" name="Administrador" color="#ef4444"/>
+    <role id="sistema" name="Sistema" color="#3b82f6"/>
+  </roles>
+  <nodes>
+    <node id="start" type="start" x="300" y="30" label="Inicio" role="sistema"/>
+    <node id="select-registro" type="process" x="300" y="100" label="Contratista selecciona registro auditado" role="contratista"/>
+    <node id="create-request" type="process" x="300" y="170" label="Crear solicitud de reapertura" role="contratista"/>
+    <node id="write-motivo" type="process" x="300" y="240" label="Escribir motivo" role="contratista"/>
+    <node id="send-email" type="process" x="300" y="310" label="Enviar email a Admin" role="sistema"/>
+    <node id="admin-review" type="process" x="300" y="390" label="Admin revisa solicitud" role="admin_contrato"/>
+    <node id="decision" type="decision" x="300" y="470" label="¿Aprobar?" role="admin_contrato"/>
+    <node id="reject" type="process" x="150" y="550" label="Rechazar + comentario" role="admin_contrato"/>
+    <node id="approve" type="process" x="450" y="550" label="Aprobar + fecha límite" role="admin_contrato"/>
+    <node id="notify-reject" type="process" x="150" y="630" label="Email: Solicitud rechazada" role="sistema"/>
+    <node id="notify-approve" type="process" x="450" y="630" label="Email: Solicitud aprobada" role="sistema"/>
+    <node id="change-state" type="process" x="450" y="700" label="Estado → Reabierto" role="sistema"/>
+    <node id="subsanar" type="process" x="450" y="770" label="Contratista subsana" role="contratista"/>
+    <node id="log" type="process" x="300" y="840" label="Registrar en trazabilidad" role="sistema"/>
+    <node id="end" type="end" x="300" y="910" label="Fin" role="sistema"/>
+  </nodes>
+  <connections>
+    <connect from="start" to="select-registro"/>
+    <connect from="select-registro" to="create-request"/>
+    <connect from="create-request" to="write-motivo"/>
+    <connect from="write-motivo" to="send-email"/>
+    <connect from="send-email" to="admin-review"/>
+    <connect from="admin-review" to="decision"/>
+    <connect from="decision" to="reject" label="No"/>
+    <connect from="decision" to="approve" label="Sí"/>
+    <connect from="reject" to="notify-reject"/>
+    <connect from="approve" to="notify-approve"/>
+    <connect from="notify-reject" to="log"/>
+    <connect from="notify-approve" to="change-state"/>
+    <connect from="change-state" to="subsanar"/>
+    <connect from="subsanar" to="log"/>
+    <connect from="log" to="end"/>
+  </connections>
+</diagram>
